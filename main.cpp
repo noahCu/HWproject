@@ -4,13 +4,13 @@
 
 int main() {
 	Map map;
-	inputMap("input.csv", map);
+	map<int> isCritical;
+	inputMap("input.csv", "criticalinput.csv",  map, isCritical);
 	
 	vector<Map> SCC;
 	Map SCCmap;
 	setSCC( map, SCC, SCCmap);
-	divideByDominator( SCC, SCCmap);
-	vector<int> path = findPath( SCC, SCCmap);
+	vector<int> path = findPath( SCC, SCCmap, isCritical);
 	
 	outputRes(path, "outputfile.csv");
 	return 0;
