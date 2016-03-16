@@ -20,5 +20,19 @@ class Map{
 
 	private:
 		int N, M;
-		vector<Edge> e[MAXN + 5];
+		vector< vector<Edge> > e;
+}
+
+int main() {
+	Map map;
+	inputMap("input.csv", map);
+	
+	vector<Map> SCC;
+	Map SCCmap;
+	setSCC( map, SCC, SCCmap);
+	divideByDominator( SCC, SCCmap);
+	vector<int> path = findPath( SCC, SCCmap);
+	
+	outputRes(path);
+	return 0;
 }
