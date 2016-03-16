@@ -1,34 +1,49 @@
 #ifndef _lib
 #define _lib
 #include<vector>
+#include<map>
+#include<set>
 
 class Edge{
 	public: 
-		void set( int from, int to, int val );
-
-	private:
+		void setEdge( int from, int to, int val );
+		Edge( int from, int to, int val, int edgeID );
 		int from, to;
 		int val; // path cost
 		int edgeID; // not necessary;
-}
+	private:
+};
+
+class Vertex{ 
+	public: 
+		operator[]( int x ); // vertex[x] would be vertex.e[x]
+		int degree();
+		int ID;
+		std::vector<Edge> e; 
+	private:
+};
+	
 
 class Map{
 	public:
-		operator[](int x); // map[x][y] would be map.e[x][y]
-		void findDominator(int s, int t);
+		operator[](int x); // map[x] would be map.v[x]
+		void divideByDominator( vector< Map > & D, Map & Dmap );// both D and Dmap should be empty
+		void findDominator();
 		bool tran(int x);
-
-	private:
+		
 		int N, M;
-		bool vis[N + 5];
-		std::vector< vector<Edge> > e;
+		int s, t;
+		std::vector<Vertex> v;
 		std::vector <int> domin;
-}
+		bool vis[N + 5];
+		
+	private:
+};
 
-void setSCC( Map map, vector<Map> SCC, Map SCCmap );
-const vector<int> & findPath( vector<Map> SCC, Map SCCmap );
+void setSCC( const Map & omap, std::vector<Map> & SCC, Map & SCCmap );
+const vector<int> & findPath( const std::vector<Map> & SCC, const Map & SCCmap );
 
-void inputMap( String inputfile, Map map);
-void outputRes( const vector<int> & path, String outputfile);
+void inputMap( String mapfile, String criticalfile, Map & omap, std::set<int> & isCritical);
+void outputRes( const std::vector<int> & path, const String & outputfile, const std::set<int> & isCritical);
 
 #endif
