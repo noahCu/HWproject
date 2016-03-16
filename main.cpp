@@ -3,8 +3,8 @@
 #include<vector>
 using namespace std;
 
-Class Edge{
-	prublic:
+class Edge{
+	public:
 
 		void set(int from, int to, int val);
 
