@@ -33,6 +33,6 @@ int main() {
 	divideByDominator( SCC, SCCmap);
 	vector<int> path = findPath( SCC, SCCmap);
 	
-	outputRes(path);
+	outputRes(path, "outputfile.csv");
 	return 0;
 }
