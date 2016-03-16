@@ -26,7 +26,7 @@ class Map{
 void setSCC( Map map, vector<Map> SCC, Map SCCmap );
 const vector<int> & findPath( vector<Map> SCC, Map SCCmap );
 
-void inputMap( String inputfile, Map map);
-void outputRes( const vector<int> & path, String outputfile);
+void inputMap( String mapfile, String criticalfile, Map map, map<int> isCritical);
+void outputRes( const vector<int> & path, String outputfile, map<int> isCritical);
 
 #endif
