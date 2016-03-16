@@ -2,7 +2,7 @@
 #define _lib
 #include<vector>
 
-Class Edge{
+class Edge{
 	public: 
 		void set( int from, int to, int val );
 
@@ -15,14 +15,17 @@ Class Edge{
 class Map{
 	public:
 		operator[](int x); // map[x][y] would be map.e[x][y]
+		void findDominator(int s, int t);
+		bool tran(int x);
 
 	private:
 		int N, M;
+		bool vis[N + 5];
 		std::vector< vector<Edge> > e;
+		std::vector <int> domin;
 }
 
 void setSCC( Map map, vector<Map> SCC, Map SCCmap );
-void divideByDominator( vector<Map> SCC, Map SCC );
 const vector<int> & findPath( vector<Map> SCC, Map SCCmap );
 
 void inputMap( String inputfile, Map map);
