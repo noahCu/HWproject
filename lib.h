@@ -15,14 +15,15 @@ Class Edge{
 class Map{
 	public:
 		operator[](int x); // map[x][y] would be map.e[x][y]
+		void divideByDominator( vector< Map > & D, Map & Dmap );// both D and Dmap should be empty
 
 	private:
 		int N, M;
+		int s, t;
 		std::vector< vector<Edge> > e;
 }
 
 void setSCC( Map map, vector<Map> SCC, Map SCCmap );
-void divideByDominator( vector<Map> SCC, Map SCC );
 const vector<int> & findPath( vector<Map> SCC, Map SCCmap );
 
 void inputMap( String inputfile, Map map);
