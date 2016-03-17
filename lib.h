@@ -19,8 +19,12 @@ class Vertex{
 		operator[]( int x ); // vertex[x] would be vertex.e[x]
 		int degree();
 		int ID;
+<<<<<<< HEAD
 		std::vector<Edge> e;
 		bool isDomin;
+=======
+		std::vector<Edge> e; 
+>>>>>>> refs/remotes/origin/mainwriting
 	private:
 };
 	
@@ -29,6 +33,7 @@ class Map{
 	public:
 		operator[](int x); // map[x] would be map.v[x]
 		void divideByDominator( vector< Map > & D, Map & Dmap );// both D and Dmap should be empty
+<<<<<<< HEAD
 		void findDominator();
 		bool traverse(int x, bool vis[]);
 		
@@ -36,6 +41,12 @@ class Map{
 		int s, t;
 		std::vector<Vertex> v;
 		
+=======
+
+		int N, M;
+		int s, t;
+		std::vector<Vertex> v;
+>>>>>>> refs/remotes/origin/mainwriting
 	private:
 };
 
