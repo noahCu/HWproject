@@ -12,10 +12,10 @@ void inputMap( string mapfile, string cfile, Map & omap, std::map<int, bool> & i
 	while (!mapRead.eof()) {
 		mapRead >> edgeID >> comma >> from >> comma >> to >> comma >> val;
 		if (idRef.find(from) == idRef.end()) {
-			idRef[from] = omap.push_back();
+			idRef[from] = omap.push_back( from );
 		}
 		if (idRef.find(to) == idRef.end()) {
-			idRef[to] = omap.push_back();
+			idRef[to] = omap.push_back( to );
 		}
 		from = idRef[from];
 		to = idRef[to];

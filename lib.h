@@ -17,6 +17,7 @@ class Edge{
 
 class Vertex{ 
 	public: 
+		Vertex( int x );
 		Edge & operator[]( int x ); // vertex[x] would be vertex.e[x]
 		int degree();
 		int push_back( Edge newEdge );
@@ -30,7 +31,7 @@ class Map{
 	public:
 		Vertex & operator[](int x); // map[x] would be map.v[x]
 		void divideByDominator( std::vector< Map > & D, Map & Dmap );// both D and Dmap should be empty
-		int push_back();
+		int push_back( int x );
 		int N, M;
 		int s, t;
 		std::vector<Vertex> v;
