@@ -20,20 +20,33 @@ class Vertex{
 		int degree();
 		int ID;
 		std::vector<Edge> e;
+<<<<<<< HEAD
 		bool isDomin;
 		std::vector<Edge> e; 
+=======
+	    bool isCritical;	
+	    bool isDomin;
+>>>>>>> refs/remotes/origin/mainwriting
 	private:
 };
 	
 
 class Map{
 	public:
+<<<<<<< HEAD
 		operator[](int x); // map[x] would be map.v[x]
 		void divideByDominator( vector< Map > & D, Map & Dmap );// both D and Dmap should be empty
 
 		void findDominator();
 		bool traverse(int x, bool vis[]);
 		
+=======
+		Vertex & operator[](int x); // map[x] would be map.v[x]
+		void divideByDominator( std::vector< Map > & D, Map & Dmap );// both D and Dmap should be empty
+		int push_back( int x );
+		void findDominator();
+		bool traverse(int x, bool vis[]);
+>>>>>>> refs/remotes/origin/mainwriting
 		int N, M;
 		int s, t;
 		std::vector<Vertex> v;
