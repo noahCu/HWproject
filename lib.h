@@ -3,7 +3,6 @@
 #include<vector>
 #include<map>
 #include<set>
-#include<string>
 
 class Edge{
 	public: 
@@ -17,32 +16,35 @@ class Edge{
 
 class Vertex{ 
 	public: 
-		Vertex( int x );
-		Edge & operator[]( int x ); // vertex[x] would be vertex.e[x]
+		operator[]( int x ); // vertex[x] would be vertex.e[x]
 		int degree();
-		int push_back( Edge newEdge );
 		int ID;
 		std::vector<Edge> e;
-	        bool isCritical;	
+		bool isDomin;
+		std::vector<Edge> e; 
 	private:
 };
 	
 
 class Map{
 	public:
-		Vertex & operator[](int x); // map[x] would be map.v[x]
-		void divideByDominator( std::vector< Map > & D, Map & Dmap );// both D and Dmap should be empty
-		int push_back( int x );
+		operator[](int x); // map[x] would be map.v[x]
+		void divideByDominator( vector< Map > & D, Map & Dmap );// both D and Dmap should be empty
+
+		void findDominator();
+		bool traverse(int x, bool vis[]);
+		
 		int N, M;
 		int s, t;
 		std::vector<Vertex> v;
+		
 	private:
 };
 
 void setSCC( const Map & omap, std::vector<Map> & SCC, Map & SCCmap );
-const std::vector<int> & findPath( const std::vector<Map> & SCC, const Map & SCCmap , std::map<int, bool> isCritical);
+const vector<int> & findPath( const std::vector<Map> & SCC, const Map & SCCmap );
 
-void inputMap( std::string mapfile, std::string criticalfile, Map & omap, std::map<int, bool> & isCritical);
-void outputRes( const std::vector<int> & path, const std::string & outputfile);
+void inputMap( String mapfile, String criticalfile, Map & omap, std::set<int> & isCritical);
+void outputRes( const std::vector<int> & path, const String & outputfile, const std::set<int> & isCritical);
 
 #endif

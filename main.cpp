@@ -4,13 +4,13 @@
 
 int main() {
 	Map map;
-	std::map<int, bool> isCritical;
+	map<int> isCritical;
 	inputMap("input.csv", "criticalinput.csv",  map, isCritical);
 	
-	std::vector<Map> SCC;
+	vector<Map> SCC;
 	Map SCCmap;
 	setSCC( map, SCC, SCCmap);
-	std::vector<int> path = findPath( SCC, SCCmap, isCritical);
+	vector<int> path = findPath( SCC, SCCmap, isCritical);
 	
 	outputRes(path, "outputfile.csv");
 	return 0;
