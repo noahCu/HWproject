@@ -22,7 +22,8 @@ class Vertex{
 		int degree();
 		int push_back( Edge newEdge );
 		int ID;
-		std::vector<Edge> e; 
+		std::vector<Edge> e;
+	        bool isCritical;	
 	private:
 };
 	

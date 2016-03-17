@@ -15,6 +15,7 @@ Edge::Edge( int from, int to, int val, int edgeID ) {
 
 Vertex::Vertex ( int x ) {
 	ID = x;
+	isCritical = 0;
 }
 
 Edge & Vertex::operator[]( int x ) {
