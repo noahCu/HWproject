@@ -1,12 +1,10 @@
 #include"lib.h"
-#include<fstream.h>
-#include<map>
-#include<set>
+#include<fstream>
 using namespace std;
 
-void inputMap( String mapfile, String cfile, Map & omap, std::set<int> & isCritical) {
-	ifstream mapRead(mapfile);
-	ifstream cRead(cfile);
+void inputMap( string mapfile, string cfile, Map & omap, std::map<int, bool> & isCritical) {
+	ifstream mapRead(mapfile.c_str());
+	ifstream cRead(cfile.c_str());
 	std::map<int, int> idRef;
 
 	int from, to, val, edgeID;
@@ -21,7 +19,7 @@ void inputMap( String mapfile, String cfile, Map & omap, std::set<int> & isCriti
 		}
 		from = idRef[from];
 		to = idRef[to];
-		omap[from].push_back(Edge(from, to, val, edgeID);
+		omap[from].push_back( Edge(from, to, val, edgeID ));
 	}
 
 	int s, t;
@@ -41,8 +39,8 @@ void inputMap( String mapfile, String cfile, Map & omap, std::set<int> & isCriti
 	cRead.close();
 }
 
-void outputRes( const vector<int> & path, const String & outputfile) {
-	ofstream resWrite(outputfile);
+void outputRes( const vector<int> & path, const string & outputfile) {
+	ofstream resWrite(outputfile.c_str());
 	if (path.empty()) {
 		resWrite << "NA";
 	} else {
