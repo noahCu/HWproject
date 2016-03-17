@@ -39,6 +39,6 @@ void setSCC( const Map & omap, std::vector<Map> & SCC, Map & SCCmap );
 const vector<int> & findPath( const std::vector<Map> & SCC, const Map & SCCmap );
 
 void inputMap( String mapfile, String criticalfile, Map & omap, std::set<int> & isCritical);
-void outputRes( const std::vector<int> & path, const String & outputfile, const std::set<int> & isCritical);
+void outputRes( const std::vector<int> & path, const String & outputfile);
 
 #endif
