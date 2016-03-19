@@ -35,7 +35,8 @@ class Map{
 		void divideByDominator(int start, int end, std::vector< Map > & D, Map & Dmap );// both D and Dmap should be empty
 		int push_back( int x );
 		void findDominator(int start, int end);
-		bool traverse(int x, int end, bool vis[], std::vector<int> & path);
+		bool findDominatorPath(int x, int end, bool vis[], std::vector<int> & path);
+		void traverse(int x, int end, int vis[], Map & newD);
 		int N, M;
 		std::vector<int> s;
 		std::vector<int> t;
