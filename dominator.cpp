@@ -76,6 +76,8 @@ void divideByDominator(int start, int end, std::vector< Map > & D, Map & Dmap ){
 			int vis[N + 5];
 			for(int j = 0; j < N; j++)vis[j] = -1;
 			traverse(last, cur, vis, D[D.size() - 1]);
+			D[D.size() - 1].s.push_back(vis[last]);
+			D[D.size() - 1].t.push_back(vis[cur]);
 		}
 	}
 }
