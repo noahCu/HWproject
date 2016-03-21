@@ -19,6 +19,10 @@ class Vertex{
 	public: 
 		Vertex( int x );
 		Edge & operator[]( int x ); // vertex[x] would be vertex.e[x]
+		std::vector<Edge>::iterator  begin();
+		std::vector<Edge>::iterator  end();
+		const std::vector<Edge>::const_iterator begin() const;
+		const std::vector<Edge>::const_iterator end() const;
 		int degree();
 		int push_back( Edge newEdge );
 		int ID;
@@ -32,11 +36,13 @@ class Vertex{
 class Map{
 	public:
 		Vertex & operator[](int x); // map[x] would be map.v[x]
+		const Vertex & operator[](int x) const;
 		void divideByDominator(int start, int end, std::vector< Map > & D, Map & Dmap );// both D and Dmap should be empty
 		int push_back( int x );
 		void findDominator(int start, int end);
 		bool findDominatorPath(int x, int end, bool vis[], std::vector<int> & path);
 		void traverse(int x, int end, int vis[], Map & newD);
+		int size() const;
 		int N, M;
 		std::vector<int> s;
 		std::vector<int> t;
@@ -44,7 +50,14 @@ class Map{
 	private:
 };
 
-void setSCC( const Map & omap, std::vector<Map> & SCC, Map & SCCmap );
+class BigMap: public Map {
+	public:
+		void addEdge( int from, int to, int ifrom, int ito, int val, int id);
+	private:
+		std::vector<Vertex> innerEdge;
+};
+
+void setSCC( const Map & omap, std::vector<Map> & SCC, BigMap & SCCmap );
 const std::vector<int> & findPath( const std::vector<Map> & SCC, const Map & SCCmap , std::map<int, bool> isCritical);
 
 void inputMap( std::string mapfile, std::string criticalfile, Map & omap, std::map<int, bool> & isCritical);

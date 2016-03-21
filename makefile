@@ -1,5 +1,5 @@
-ALLO = main.o io.o graph.o
-CFLAG = -c
+ALLO = main.o io.o graph.o SCC.o
+CFLAG = -c -std=c++11
 
 all: HW
 
@@ -11,6 +11,9 @@ main.o: main.cpp lib.h
 
 io.o: io.cpp lib.h
 	g++ -c -std=c++11 io.cpp
+
+SCC.o: SCC.cpp lib.h
+	g++ ${CFLAG} SCC.cpp
 
 graph.o: graph.cpp lib.h
 	g++ -c graph.cpp

@@ -8,7 +8,7 @@ int main() {
 	inputMap("input.csv", "criticalinput.csv",  map, isCritical);
 	
 	std::vector<Map> SCC;
-	Map SCCmap;
+	BigMap SCCmap;
 	setSCC( map, SCC, SCCmap);
 	std::vector<int> path = findPath( SCC, SCCmap, isCritical);
 	
