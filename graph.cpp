@@ -40,7 +40,10 @@ int Map::push_back( int x ) {
 	return v.size() - 1;
 }
 
-	
+const Vertex & Map::operator[](int x) const { return v[x]; }
+int Map::size() const {return v.size();}
 
-
-
+std::vector<Edge>::iterator Vertex::begin() {return e.begin(); }
+std::vector<Edge>::iterator Vertex::end() {return e.end(); }
+const std::vector<Edge>::const_iterator Vertex::begin() const {return e.begin(); }
+const std::vector<Edge>::const_iterator Vertex::end() const {return e.end(); }
