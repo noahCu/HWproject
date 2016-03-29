@@ -5,6 +5,7 @@
 #include<set>
 #include<string>
 #include<queue>
+#define INF 2147483647
 
 class Edge{
 	public: 

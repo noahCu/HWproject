@@ -39,7 +39,7 @@ void Map::shortestPath(int start, std::vector<SPath> & dis, bool valid[]){
 	for(int i = 0; i < v.size(); i++){
 		dis.push_back();
 		dis[i].pre = -1;
-		dis[i].val = -1;
+		dis[i].val = INF;
 		dis[i].x = i;
 		vis[i] = false;
 	}
@@ -54,7 +54,7 @@ void Map::shortestPath(int start, std::vector<SPath> & dis, bool valid[]){
 			int to = v[tmp.x].e[i].to;
 			int val = v[tmp.x].e[i].val;
 			if(valid[to] == true){
-				if(dis[to].val == -1 || (dis[to].val > dis[tmp.x].val + val)){
+				if(dis[to].val > dis[tmp.x].val + val){
 					dis[to].val = dis[tmp.x].val + val;
 					dis[to].pre = tmp.x;
 					if(vis[to] == false){
