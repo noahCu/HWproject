@@ -37,11 +37,15 @@ class Map{
 	public:
 		Vertex & operator[](int x); // map[x] would be map.v[x]
 		const Vertex & operator[](int x) const;
-		void divideByDominator(int start, int end, std::vector< Map > & D, Map & Dmap );// both D and Dmap should be empty
+		void divideByDominator(int start, int end, std::vector< Map > & D);// both D and Dmap should be empty
 		int push_back( int x );
 		void findDominator(int start, int end);
 		bool findDominatorPath(int x, int end, bool vis[], std::vector<int> & path);
 		void traverse(int x, int end, int vis[], Map & newD);
+		void pathInSCC(int start, int end, std::vector<int> & path);
+		void reverse(Map & reEdge);
+		void shortestWalk(int start, std::vector<int> & dis);
+		void criPath(int start, int end, Map & reEdge, std::vector<int> path);
 		int size() const;
 		int N, M;
 		std::vector<int> s;
