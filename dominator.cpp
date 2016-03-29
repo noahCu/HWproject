@@ -59,7 +59,7 @@ int traverse(int x, int end, int vis[], Map & newD){
 	}
 }
 
-void divideByDominator(int start, int end, std::vector< Map > & D, Map & Dmap ){
+void divideByDominator(int start, int end, std::vector< Map > & D){
 	findDominator(start, end);
 	bool vis[N + 5];
 	for(int i = 0; i < N; i++)vis[i] = false;
@@ -73,11 +73,15 @@ void divideByDominator(int start, int end, std::vector< Map > & D, Map & Dmap ){
 			last = cur;
 			cur = path[i];
 			D.push_back();
+			int tmp = D.size() - 1;
+			D[tmp].s.clear();
+			D[tmp].t.clear();
+			D[tmp].v.clear();
 			int vis[N + 5];
 			for(int j = 0; j < N; j++)vis[j] = -1;
-			traverse(last, cur, vis, D[D.size() - 1]);
-			D[D.size() - 1].s.push_back(vis[last]);
-			D[D.size() - 1].t.push_back(vis[cur]);
+			traverse(last, cur, vis, D[tmp]);
+			D[tmp].s.push_back(vis[last]);
+			D[tmp].t.push_back(vis[cur]);
 		}
 	}
 }
