@@ -4,6 +4,7 @@
 #include<map>
 #include<set>
 #include<string>
+#include<queue>
 
 class Edge{
 	public: 
@@ -44,8 +45,8 @@ class Map{
 		void traverse(int x, int end, int vis[], Map & newD);
 		void pathInSCC(int start, int end, std::vector<int> & path);
 		void reverse(Map & reEdge);
-		void shortestWalk(int start, std::vector<int> & dis);
-		void criPath(int start, int end, Map & reEdge, std::vector<int> path);
+		void shortestPath(int start, std::vector<SPath> & dis, bool valid[]);
+		void criPath(int start, int end, Map & reEdge, std::vector<int> edgepath);
 		int size() const;
 		int N, M;
 		std::vector<int> s;
@@ -59,6 +60,32 @@ class BigMap: public Map {
 		void addEdge( int from, int to, int ifrom, int ito, int val, int id);
 	private:
 		std::vector<Vertex> innerEdge;
+};
+
+class YenPath{
+	public:
+		vector<int> node;
+		std::vector<int>::iterator x;
+		std::vector<int>::iterator pre;
+		int len; // from start to pre
+		int totalLen; // from start to end
+		int X, Pre; // X and Pre of this state
+		int h; // val of A* function
+	private:
+};
+
+struct Yencmp{
+	bool operator()(YenPath* a, YenPath* b){
+		return a -> h > b -> h;
+	}
+};
+
+class SPath{
+	public:
+		int pre;
+		int val;
+		int x;
+	private:
 };
 
 void setSCC( const Map & omap, std::vector<Map> & SCC, BigMap & SCCmap );

@@ -3,6 +3,7 @@
 #include <cstdlib>
 #include <algorithm>
 #include <vector>
+#include <queue>
 #include "lib.h"
 
 using namespace std;
@@ -27,6 +28,43 @@ void Map::reverse(Map & reEdge){
 			int edgeID = v[i].e[j].edgeID;
 			reEdge[from].push_back( Edge(from, to, val, edgeID));
 		}
+	}
+}
+
+void Map::shortestPath(int start, std::vector<SPath> & dis, bool valid[]){
+	queue<SPath*> q;
+	q.clear();
+	dis.clear();
+	bool vis[v.size() + 5];
+	for(int i = 0; i < v.size(); i++){
+		dis.push_back();
+		dis[i].pre = -1;
+		dis[i].val = -1;
+		dis[i].x = i;
+		vis[i] = false;
+	}
+	vis[start] = true;
+	dis[start].pre = start;
+	dis[start].val = 0;
+	q.push(&dis[start]);
+	while(!q.empty()){
+		SPath tmp = *q.top();
+		q.pop();
+		for(int i = 0; i < v[tmp.x].e.size(); i++){
+			int to = v[tmp.x].e[i].to;
+			int val = v[tmp.x].e[i].val;
+			if(valid[to] == true){
+				if(dis[to].val == -1 || (dis[to].val > dis[tmp.x].val + val)){
+					dis[to].val = dis[tmp.x].val + val;
+					dis[to].pre = tmp.x;
+					if(vis[to] == false){
+						vis[to] = true;
+						q.push(&dis[to]);
+					}
+				}
+			}
+		}
+		vis[tmp.x] = false;
 	}
 }
 
