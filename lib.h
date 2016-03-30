@@ -11,6 +11,7 @@ class SPath{
 		int pre;
 		int val;
 		int x;
+		int preEdge;
 	private:
 };
 
