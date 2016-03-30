@@ -3,6 +3,7 @@
 #include"lib.h"
 
 int main() {
+	/*
 	Map map;
 	std::map<int, bool> isCritical;
 	inputMap("input.csv", "criticalinput.csv",  map, isCritical);
@@ -13,5 +14,7 @@ int main() {
 	std::vector<int> path = findPath( SCC, SCCmap);
 	
 	outputRes(path, "outputfile.csv");
+	*/
+	mainTest();
 	return 0;
 }

@@ -148,7 +148,7 @@ int updatePath( std::vector<Map> & SCC, const BigMap & SCCMap, const std::set<in
 
 
 
-const std::vector<int> & findPath( std::vector<Map> & SCC, const BigMap & SCCMap) {
+ std::vector<int> findPath( std::vector<Map> & SCC, const BigMap & SCCMap) {
 	std::vector< std::set<int> > tpOrder;
 	tpSort( SCC, SCCMap, tpOrder );
 	

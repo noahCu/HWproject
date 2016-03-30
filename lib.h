@@ -15,6 +15,18 @@ class SPath{
 	private:
 };
 
+class YenPath{
+	public:
+		std::vector<int> node;
+		std::vector<int>::iterator x;
+		std::vector<int>::iterator pre;
+		int len; // from start to pre
+		int totalLen; // from start to end
+		int X, Pre; // X and Pre of this state, vertex, not index in node[]
+		int h; // val of A* function
+	private:
+};
+
 class Edge{
 	public: 
 		void setEdge( int from, int to, int val );
@@ -45,7 +57,7 @@ class Vertex{
 };
 	
 
-clas Map{
+class Map{
 	public:
 		Vertex &  operator[](int x); // map[x] would be map.v[x]
 		const Vertex & operator[](int x) const;
@@ -77,17 +89,6 @@ class BigMap: public Map {
 		std::vector<Vertex> innerEdge;
 };
 
-class YenPath{
-	public:
-		std::vector<int> node;
-		std::vector<int>::iterator x;
-		std::vector<int>::iterator pre;
-		int len; // from start to pre
-		int totalLen; // from start to end
-		int X, Pre; // X and Pre of this state, vertex, not index in node[]
-		int h; // val of A* function
-	private:
-};
 
 struct Yencmp{
 	bool operator()(YenPath a, YenPath b){
@@ -112,9 +113,10 @@ struct YenNewPathcmp{
 
 
 void setSCC( const Map & omap, std::vector<Map> & SCC, BigMap & SCCmap );
-const std::vector<int> & findPath( std::vector<Map> & SCC, const Map & SCCmap);
+std::vector<int> indPath( std::vector<Map> & SCC, const Map & SCCmap);
 
 void inputMap( std::string mapfile, std::string criticalfile, Map & omap, std::map<int, bool> & isCritical);
 void outputRes( const std::vector<int> & path, const std::string & outputfile);
 
+int mainTest();
 #endif
