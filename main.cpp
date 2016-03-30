@@ -10,7 +10,7 @@ int main() {
 	std::vector<Map> SCC;
 	BigMap SCCmap;
 	setSCC( map, SCC, SCCmap);
-	std::vector<int> path = findPath( SCC, SCCmap, isCritical);
+	std::vector<int> path = findPath( SCC, SCCmap);
 	
 	outputRes(path, "outputfile.csv");
 	return 0;
