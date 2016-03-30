@@ -43,9 +43,21 @@ Vertex & Map::operator[]( int x ) {
 	return v[x];
 }
 
+Map::Map() {
+	N = M = -1;
+	s.resize(1);
+	t.resize(1);
+}
+
 int Map::push_back( int x ) {
 	v.push_back( Vertex( x ) );
 	return v.size() - 1;
+}
+
+int Map::push_back( const Vertex & x ) {
+	int res = push_back(x.ID);
+	v[res].isCritical = x.isCritical;
+	return res;
 }
 
 const Vertex & Map::operator[](int x) const { return v[x]; }
@@ -58,3 +70,14 @@ const std::vector<Edge>::const_iterator Vertex::end() const {return e.end(); }
 
 const Edge & BigMap::getOutter( int a, int b ) const { return v[a][b];}
 const Edge & BigMap::getInner( int a, int b ) const { return innerEdge[a][b]; }
+int BigMap::push_back( int x ) {
+	int res = Map::push_back(x);
+	innerEdge.push_back( x );
+ 	return res;
+}
+
+int BigMap::push_back( const Vertex & x ) {
+	int res = Map::push_back(x);
+	innerEdge.push_back( x.ID );
+	return res;
+}
