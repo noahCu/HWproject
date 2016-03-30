@@ -18,6 +18,14 @@ Vertex::Vertex ( int x ) {
 	isCritical = 0;
 }
 
+int Vertex::size() const {
+	return e.size();
+}
+
+const Edge & Vertex:: operator[] (int x) const {
+	return e[x];
+}
+
 Edge & Vertex::operator[]( int x ) {
 	return e[x];
 }
@@ -47,3 +55,6 @@ std::vector<Edge>::iterator Vertex::begin() {return e.begin(); }
 std::vector<Edge>::iterator Vertex::end() {return e.end(); }
 const std::vector<Edge>::const_iterator Vertex::begin() const {return e.begin(); }
 const std::vector<Edge>::const_iterator Vertex::end() const {return e.end(); }
+
+const Edge & BigMap::getOutter( int a, int b ) const { return v[a][b];}
+const Edge & BigMap::getInner( int a, int b ) const { return innerEdge[a][b]; }

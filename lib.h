@@ -6,6 +6,15 @@
 #include<string>
 #include<queue>
 
+class SPath{
+	public:
+		int pre;
+		int val;
+		int x;
+		int preEdge;
+	private:
+};
+
 class Edge{
 	public: 
 		void setEdge( int from, int to, int val );
@@ -20,10 +29,12 @@ class Vertex{
 	public: 
 		Vertex( int x );
 		Edge & operator[]( int x ); // vertex[x] would be vertex.e[x]
+		const Edge & operator[] (int x) const;
 		std::vector<Edge>::iterator  begin();
 		std::vector<Edge>::iterator  end();
 		const std::vector<Edge>::const_iterator begin() const;
 		const std::vector<Edge>::const_iterator end() const;
+		int size() const;
 		int degree();
 		int push_back( Edge newEdge );
 		int ID;
@@ -67,14 +78,6 @@ struct YenNewPathcmp{
 	}
 };
 
-class SPath{
-	public:
-		int pre;
-		int val;
-		int x;
-		int preEdge;
-	private:
-};
 
 class Map{
 	public:
@@ -102,6 +105,8 @@ class Map{
 class BigMap: public Map {
 	public:
 		void addEdge( int from, int to, int ifrom, int ito, int val, int id);
+		const Edge & getOutter(int, int) const;
+		const Edge & getInner(int, int ) const;
 	private:
 		std::vector<Vertex> innerEdge;
 };
@@ -109,9 +114,10 @@ class BigMap: public Map {
 
 
 void setSCC( const Map & omap, std::vector<Map> & SCC, BigMap & SCCmap );
-const std::vector<int> & findPath( const std::vector<Map> & SCC, const Map & SCCmap , std::map<int, bool> isCritical);
+std::vector<int> indPath( std::vector<Map> & SCC, const Map & SCCmap);
 
 void inputMap( std::string mapfile, std::string criticalfile, Map & omap, std::map<int, bool> & isCritical);
 void outputRes( const std::vector<int> & path, const std::string & outputfile);
 
+int mainTest();
 #endif
