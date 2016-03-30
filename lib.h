@@ -65,9 +65,10 @@ class BigMap: public Map {
 
 class YenPath{
 	public:
-		vector<int> node;
-		std::vector<int>::iterator x;
-		std::vector<int>::iterator pre;
+		std::vector<int> node;
+		std::vector<int> edge; // store edgeID before node[i]
+		int x;
+		int pre;
 		int len; // from start to pre
 		int totalLen; // from start to end
 		int X, Pre; // X and Pre of this state
@@ -76,8 +77,22 @@ class YenPath{
 };
 
 struct Yencmp{
-	bool operator()(YenPath* a, YenPath* b){
-		return a -> h > b -> h;
+	bool operator()(YenPath a, YenPath b){
+		return a.h > b.h;
+	}
+};
+
+class YenNewPath{
+	public:
+		int x;
+		int edgeID;
+		int h;
+	private:
+};
+
+struct YenNewPathcmp{
+	bool operator()(YenNewPath a, YenNewPath b){
+		return a.h > b.h;
 	}
 };
 
@@ -86,6 +101,7 @@ class SPath{
 		int pre;
 		int val;
 		int x;
+		int preEdge;
 	private:
 };
 
