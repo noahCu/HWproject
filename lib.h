@@ -47,7 +47,9 @@ class Map{
 		void pathInSCC(int start, int end, std::vector<int> & path);
 		void reverse(Map & reEdge);
 		void shortestPath(int start, std::vector<SPath> & dis, bool valid[]);
-		void criPath(int start, int end, Map & reEdge, std::vector<int> edgepath);
+		void criPath(int start, int end, Map & reEdge, YenPath & edgepath);
+		bool checkValid(int start, int end, const YenPath & path);
+		void updateSPath(int newnode, int start, std::vector<SPath> & dis, bool valid[], const Map & reEdge);
 		int size() const;
 		int N, M;
 		std::vector<int> s;
@@ -67,11 +69,11 @@ class YenPath{
 	public:
 		std::vector<int> node;
 		std::vector<int> edge; // store edgeID before node[i]
-		int x;
-		int pre;
+		int x; // index in node[]
+		int pre; // index in node[]
 		int len; // from start to pre
 		int totalLen; // from start to end
-		int X, Pre; // X and Pre of this state
+		int X, Pre; // X and Pre of this state, vertex, not index in node[]
 		int h; // val of A* function
 	private:
 };
@@ -87,6 +89,7 @@ class YenNewPath{
 		int x;
 		int edgeID;
 		int h;
+		int edgeLen;
 	private:
 };
 
