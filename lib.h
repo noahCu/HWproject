@@ -45,7 +45,7 @@ class Vertex{
 };
 	
 
-class Map{
+clas Map{
 	public:
 		Vertex &  operator[](int x); // map[x] would be map.v[x]
 		const Vertex & operator[](int x) const;
