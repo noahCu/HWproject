@@ -5,7 +5,6 @@
 #include<set>
 #include<string>
 #include<queue>
-#define INF 2147483647
 
 class Edge{
 	public: 
@@ -34,37 +33,6 @@ class Vertex{
 	private:
 };
 	
-
-class Map{
-	public:
-		Vertex & operator[](int x); // map[x] would be map.v[x]
-		const Vertex & operator[](int x) const;
-		void divideByDominator(int start, int end, std::vector< Map > & D);// both D and Dmap should be empty
-		int push_back( int x );
-		void findDominator(int start, int end);
-		bool findDominatorPath(int x, int end, bool vis[], std::vector<int> & path);
-		void traverse(int x, int end, int vis[], Map & newD);
-		void pathInSCC(int start, int end, std::vector<int> & path);
-		void reverse(Map & reEdge);
-		void shortestPath(int start, std::vector<SPath> & dis, bool valid[]);
-		void criPath(int start, int end, Map & reEdge, YenPath & edgepath);
-		bool checkValid(int start, int end, const YenPath & path);
-		void updateSPath(int newnode, int start, std::vector<SPath> & dis, bool valid[], const Map & reEdge);
-		int size() const;
-		int N, M;
-		std::vector<int> s;
-		std::vector<int> t;
-		std::vector<Vertex> v;
-	private:
-};
-
-class BigMap: public Map {
-	public:
-		void addEdge( int from, int to, int ifrom, int ito, int val, int id);
-	private:
-		std::vector<Vertex> innerEdge;
-};
-
 class YenPath{
 	public:
 		std::vector<int> node;
@@ -107,6 +75,38 @@ class SPath{
 		int preEdge;
 	private:
 };
+
+class Map{
+	public:
+		Vertex & operator[](int x); // map[x] would be map.v[x]
+		const Vertex & operator[](int x) const;
+		void divideByDominator(int start, int end, std::vector< Map > & D);// both D and Dmap should be empty
+		int push_back( int x );
+		void findDominator(int start, int end);
+		bool findDominatorPath(int x, int end, bool vis[], std::vector<int> & path);
+		int traverse(int x, int end, int vis[], Map & newD);
+		void pathInSCC(int start, int end, std::vector<int> & path);
+		void reverse(Map & reEdge);
+		void shortestPath(int start, std::vector<SPath> & dis, bool valid[]);
+		void criPath(int start, int end, Map & reEdge, YenPath & edgepath);
+		bool checkValid(int start, int end, const std::vector<int> & path);
+		void updateSPath(int newnode, int start, std::vector<SPath> & dis, bool valid[], const Map & reEdge);
+		int size() const;
+		int N, M;
+		std::vector<int> s;
+		std::vector<int> t;
+		std::vector<Vertex> v;
+	private:
+};
+
+class BigMap: public Map {
+	public:
+		void addEdge( int from, int to, int ifrom, int ito, int val, int id);
+	private:
+		std::vector<Vertex> innerEdge;
+};
+
+
 
 void setSCC( const Map & omap, std::vector<Map> & SCC, BigMap & SCCmap );
 const std::vector<int> & findPath( const std::vector<Map> & SCC, const Map & SCCmap , std::map<int, bool> isCritical);

@@ -1,4 +1,4 @@
-ALLO = main.o io.o graph.o SCC.o
+ALLO = main.o io.o graph.o SCC.o dominator.o pathInsideSCC.o
 CFLAG = -c -std=c++11
 
 all: HW
@@ -17,6 +17,12 @@ SCC.o: SCC.cpp lib.h
 
 graph.o: graph.cpp lib.h
 	g++ -c graph.cpp
+
+dominator.o: dominator.cpp lib.h
+	g++ -c dominator.cpp
+
+pathInsideSCC.o: pathInsideSCC.cpp lib.h
+	g++ -c pathInsideSCC.cpp
 
 clean:
 	rm *.o

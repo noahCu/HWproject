@@ -3,7 +3,7 @@
 #include"lib.h"
 
 int main() {
-	Map map;
+	/*Map map;
 	std::map<int, bool> isCritical;
 	inputMap("input.csv", "criticalinput.csv",  map, isCritical);
 	
@@ -12,6 +12,6 @@ int main() {
 	setSCC( map, SCC, SCCmap);
 	std::vector<int> path = findPath( SCC, SCCmap, isCritical);
 	
-	outputRes(path, "outputfile.csv");
+	outputRes(path, "outputfile.csv");*/
 	return 0;
 }

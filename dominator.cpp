@@ -41,7 +41,7 @@ void Map::findDominator(int start, int end){
 	}
 }
 
-int traverse(int x, int end, int vis[], Map & newD){
+int Map::traverse(int x, int end, int vis[], Map & newD){
 	int verindex = newD.push_back(v[x].ID);
 	newD[verindex].isCritical = v[x].isCritical;
 	newD[verindex].e.clear();
@@ -59,7 +59,7 @@ int traverse(int x, int end, int vis[], Map & newD){
 	}
 }
 
-void divideByDominator(int start, int end, std::vector< Map > & D){
+void Map::divideByDominator(int start, int end, std::vector< Map > & D){
 	findDominator(start, end);
 	bool vis[N + 5];
 	for(int i = 0; i < N; i++)vis[i] = false;
@@ -72,7 +72,8 @@ void divideByDominator(int start, int end, std::vector< Map > & D){
 		if(v[path[i]].isDomin == true){
 			last = cur;
 			cur = path[i];
-			D.push_back();
+			Map tmpmap;
+			D.push_back(tmpmap);
 			int tmp = D.size() - 1;
 			D[tmp].s.clear();
 			D[tmp].t.clear();
