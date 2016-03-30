@@ -230,7 +230,7 @@ void Map::criPath(int start, int end, Map & reEdge, YenPath & edgepath){
 	// ans
 }
 
-void Map::pathInSCC(int start, int end, std::vector<int> & path){// path store ID of edge
+int Map::pathInSCC(int start, int end, std::vector<int> & path){// path store ID of edge
 	/*std::vector< Map > D;
 	divideByDominator(start, end, D);
 	path.clear();
@@ -239,4 +239,5 @@ void Map::pathInSCC(int start, int end, std::vector<int> & path){// path store I
 		D[i].reverse(reEdge);
 		D[i].criPath(D[i].s[0], D[i].t[0], reEdge, path);
 	}*/
+	return 0;
 }

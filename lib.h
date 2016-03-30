@@ -85,7 +85,7 @@ class Map{
 		void findDominator(int start, int end);
 		bool findDominatorPath(int x, int end, bool vis[], std::vector<int> & path);
 		int traverse(int x, int end, int vis[], Map & newD);
-		void pathInSCC(int start, int end, std::vector<int> & path);
+		int pathInSCC(int start, int end, std::vector<int> & path);
 		void reverse(Map & reEdge);
 		void shortestPath(int start, std::vector<SPath> & dis, bool valid[]);
 		void criPath(int start, int end, Map & reEdge, YenPath & edgepath);
