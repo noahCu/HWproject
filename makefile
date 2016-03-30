@@ -1,5 +1,5 @@
 ALLO = main.o io.o graph.o SCC.o dominator.o test.o pathInsideSCC.o
-CFLAG = -c -std=c++11
+CFLAG = -g -c -std=c++11
 
 all: HW
 
@@ -7,25 +7,25 @@ HW: ${ALLO}
 	g++ -g ${ALLO} -o HW
 
 main.o: main.cpp lib.h
-	g++ -c main.cpp
+	g++ ${CFLAG} main.cpp
 
 test.o: test.cpp lib.h
 	g++ ${CFLAG} test.cpp
 
 io.o: io.cpp lib.h
-	g++ -c -std=c++11 io.cpp
+	g++ ${CFLAG} -std=c++11 io.cpp
 
 SCC.o: SCC.cpp lib.h
 	g++ ${CFLAG} SCC.cpp
 
 graph.o: graph.cpp lib.h
-	g++ -c graph.cpp
+	g++ ${CFLAG} graph.cpp
 
 dominator.o: dominator.cpp lib.h
-	g++ -c dominator.cpp
+	g++ ${CFLAG} dominator.cpp
 
 pathInsideSCC.o: pathInsideSCC.cpp lib.h
-	g++ -c pathInsideSCC.cpp
+	g++ ${CFLAG} pathInsideSCC.cpp
 
 clean:
 	rm *.o

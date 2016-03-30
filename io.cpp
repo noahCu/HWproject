@@ -25,8 +25,12 @@ void inputMap( string mapfile, string cfile, Map & omap, std::map<int, bool> & i
 	int s, t;
 	char ch;
 	cRead >> s >> ch >> t >> ch;
-	omap.s[0] = idRef[s];
-	omap.t[0] = idRef[t];
+	omap.s.reserve(1);
+	omap.t.reserve(1);
+	omap.s.push_back( idRef[s] );
+	omap.t.push_back( idRef[t] );
+	omap[ idRef[s] ].isCritical = 1;
+	omap[ idRef[t] ].isCritical = 1;
 
 	int cri;
 	while (!cRead.eof()) {
