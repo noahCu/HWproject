@@ -36,6 +36,7 @@ std::vector<int> findBelong( const Map & omap ) {
 	std::map< int, int > idxRef;
 	int cnt = 0;
 	std::vector<int> belong;
+	belong.resize( omap.size() );
 	for (int i = 0; i < mapsize; i++) {
 		if (idxRef.find( farA[i] ) != idxRef.end() ) {
 		       belong[i] = idxRef[ farA[i] ];
@@ -47,16 +48,36 @@ std::vector<int> findBelong( const Map & omap ) {
 	return belong;
 }
 
+int belongMax( const std::vector<int> belong ) {
+	int res =0;
+	for (auto it = belong.begin(); it != belong.end(); it++) if (*it> res) res = *it;
+	return res;
+}
+
 void setSCC( const Map & omap, std::vector<Map> & SCC, BigMap & SCCMap ) {
 	std::vector<int> belong;
 	std::vector<int> SCCid;
 	belong = findBelong( omap );
-	std::vector<int> belong_id;
+
+	int mb = belongMax( belong ) + 1;
+	SCC.resize( mb);
+	for (int i = 0; i < mb; i++) SCCMap.push_back( i );
+	
+	std::vector<int> belong_id( omap.size() );
 
 	int mapsize = omap.size();
 	for (int i = 0; i < mapsize; i++) {
 		belong_id[i] = SCC[ belong[i] ].size();
-		SCC[ belong[i] ].push_back( omap[i].ID );
+		SCC[ belong[i] ].push_back( omap[i] );
+		if ( omap[i].isCritical ) SCCMap[ belong[i] ].isCritical = 1;
+		if ( i == omap.s[0] ) {
+			SCCMap.s[0] = belong[i];
+			SCC[ belong[i] ].s[0] = belong_id[i];
+		}
+		if ( i == omap.t[0] ) {
+			SCCMap.t[0] = belong[i];
+			SCC[ belong[i] ].t[0] = belong_id[i];
+		}
 	}
 
 	for (auto ver = omap.v.begin(); ver != omap.v.end(); ver++) {

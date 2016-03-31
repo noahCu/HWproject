@@ -81,10 +81,12 @@ struct YenNewPathcmp{
 
 class Map{
 	public:
+		Map();
 		Vertex & operator[](int x); // map[x] would be map.v[x]
 		const Vertex & operator[](int x) const;
 		void divideByDominator(int start, int end, std::vector< Map > & D);// both D and Dmap should be empty
 		int push_back( int x );
+		int push_back( const Vertex & );
 		void findDominator(int start, int end);
 		bool findDominatorPath(int x, int end, bool vis[], std::vector<int> & path);
 		int traverse(int x, int end, int vis[], Map & newD);
@@ -107,6 +109,8 @@ class BigMap: public Map {
 		void addEdge( int from, int to, int ifrom, int ito, int val, int id);
 		const Edge & getOutter(int, int) const;
 		const Edge & getInner(int, int ) const;
+		int push_back(int);
+		int push_back(const Vertex &);
 	private:
 		std::vector<Vertex> innerEdge;
 };
