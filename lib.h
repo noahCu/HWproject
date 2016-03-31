@@ -58,8 +58,8 @@ class YenPath{
 };
 
 struct Yencmp{
-	bool operator()(YenPath a, YenPath b){
-		return a.h > b.h;
+	bool operator()(YenPath* a, YenPath* b){
+		return a -> h > b -> h;
 	}
 };
 
@@ -73,8 +73,8 @@ class YenNewPath{
 };
 
 struct YenNewPathcmp{
-	bool operator()(YenNewPath a, YenNewPath b){
-		return a.h > b.h;
+	bool operator()(YenNewPath* a, YenNewPath* b){
+		return a -> h > b -> h;
 	}
 };
 
@@ -92,8 +92,8 @@ class Map{
 		void reverse(Map & reEdge);
 		void shortestPath(int start, std::vector<SPath> & dis, bool valid[]);
 		void criPath(int start, int end, Map & reEdge, YenPath & edgepath);
-		bool checkValid(int start, int end, const std::vector<int> & path);
-		void updateSPath(int newnode, int start, std::vector<SPath> & dis, bool valid[], const Map & reEdge);
+		bool checkValid(int start, int end, std::vector<int> & path);
+		void updateSPath(int newnode, int start, std::vector<SPath> & dis, bool valid[], Map & reEdge);
 		int size() const;
 		int N, M;
 		std::vector<int> s;

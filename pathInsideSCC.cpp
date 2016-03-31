@@ -4,8 +4,11 @@
 #include <algorithm>
 #include <vector>
 #include <queue>
+#include <list>
 #include "lib.h"
 #define INF 100000
+
+
 
 using namespace std;
 
@@ -35,8 +38,8 @@ void Map::reverse(Map & reEdge){
 }
 
 void Map::shortestPath(int start, std::vector<SPath> & dis, bool valid[]){
-	queue<SPath*> q;
-	dis.clear();
+	list<SPath*> q;   q.clear();
+	vector<SPath> ().swap(dis);
 	bool vis[v.size() + 5];
 	
 	for(int i = 0; i < v.size(); i++){
@@ -52,9 +55,9 @@ void Map::shortestPath(int start, std::vector<SPath> & dis, bool valid[]){
 	vis[start] = true;
 	dis[start].pre = start;
 	dis[start].val = 0;
-	q.push(&dis[start]);
+	q.push_back(&dis[start]);
 	while(!q.empty()){
-		SPath tmp = *q.front();   q.pop();
+		SPath tmp = *q.front();   q.pop_front();
 		for(int i = 0; i < v[tmp.x].e.size(); i++){
 			int to = v[tmp.x].e[i].to;
 			int val = v[tmp.x].e[i].val;
@@ -65,7 +68,7 @@ void Map::shortestPath(int start, std::vector<SPath> & dis, bool valid[]){
 					dis[to].preEdge = v[tmp.x].e[i].edgeID;
 					if(vis[to] == false){
 						vis[to] = true;
-						q.push(&dis[to]);
+						q.push_back(&dis[to]);
 					}
 				}
 			}
@@ -74,7 +77,7 @@ void Map::shortestPath(int start, std::vector<SPath> & dis, bool valid[]){
 	}
 }
 
-void Map::updateSPath(int newnode, int start, std::vector<SPath> & dis, bool valid[], const Map & reEdge){
+void Map::updateSPath(int newnode, int start, std::vector<SPath> & dis, bool valid[], Map & reEdge){
 	for(int i = 0; i < reEdge[newnode].e.size(); i++){
 		int to = reEdge[newnode].e[i].to;
 		int val = reEdge[newnode].e[i].val;
@@ -86,11 +89,11 @@ void Map::updateSPath(int newnode, int start, std::vector<SPath> & dis, bool val
 	}
 	bool vis[v.size() + 5];
 	for(int i = 0; i < v.size(); i++)vis[i] = false;
-	queue<SPath*> q;
-	q.push(&dis[newnode]);
+	list<SPath*> q;   q.clear();
+	q.push_back(&dis[newnode]);
 	vis[newnode] = true;
 	while(!q.empty()){
-		SPath tmp = *q.front();   q.pop();
+		SPath tmp = *q.front();   q.pop_front();
 		for(int i = 0; i < v[tmp.x].e.size(); i++){
 			int to = v[tmp.x].e[i].to;
 			int val = v[tmp.x].e[i].val;
@@ -101,7 +104,7 @@ void Map::updateSPath(int newnode, int start, std::vector<SPath> & dis, bool val
 					dis[to].preEdge = v[tmp.x].e[i].edgeID;
 					if(vis[to] == false){
 						vis[to] = true;
-						q.push(&dis[to]);
+						q.push_back(&dis[to]);
 					}
 				}
 			}
@@ -110,7 +113,7 @@ void Map::updateSPath(int newnode, int start, std::vector<SPath> & dis, bool val
 	}
 }
 
-bool Map::checkValid(int start, int end, const std::vector<int> & path){
+bool Map::checkValid(int start, int end, std::vector<int> & path){
 	if(path[0] != start || path[path.size() - 1] != end)return false;
 	int numOfCri = 0;
 	for(int i = 0; i < v.size(); i++)if(v[i].isCritical)numOfCri++;
@@ -120,21 +123,21 @@ bool Map::checkValid(int start, int end, const std::vector<int> & path){
 	return false;
 }
 
-void makeNewstate(int end, YenPath & newstate, const YenNewPath & curP, const YenPath & tmp, const std::vector<SPath> & dis){
-	newstate.node.clear();
-	for(int i = 0; i <= tmp.pre; i++)newstate.node.push_back(tmp.node[i]);
-	newstate.edge.clear();
-	for(int i = 0; i <= tmp.pre; i++)newstate.edge.push_back(tmp.edge[i]);
+void makeNewstate(int end, YenPath* newstate, YenNewPath & curP, YenPath & tmp, std::vector<SPath> & dis){
+	newstate -> node.clear();
+	for(int i = 0; i <= tmp.pre; i++)newstate -> node.push_back(tmp.node[i]);
+	newstate -> edge.clear();
+	for(int i = 0; i <= tmp.pre; i++)newstate -> edge.push_back(tmp.edge[i]);
 	int curver = curP.x;
-	newstate.edge.push_back(curP.edgeID);
+	newstate -> edge.push_back(curP.edgeID);
 	while(curver != end){
-		newstate.node.push_back(curver);
-		newstate.edge.push_back(dis[curver].preEdge);
+		newstate -> node.push_back(curver);
+		newstate -> edge.push_back(dis[curver].preEdge);
 		curver = dis[curver].pre;
 	}
-	newstate.node.push_back(end);
-	newstate.Pre = tmp.node[tmp.pre];   newstate.X = curP.x;   newstate.h = curP.h;
-	newstate.totalLen = tmp.len + curP.edgeLen + dis[curP.x].val;
+	newstate -> node.push_back(end);
+	newstate -> Pre = tmp.node[tmp.pre];   newstate -> X = curP.x;   newstate -> h = curP.h;
+	newstate -> totalLen = tmp.len + curP.edgeLen + dis[curP.x].val;
 }
 
 void Map::criPath(int start, int end, Map & reEdge, YenPath & edgepath){
@@ -160,12 +163,14 @@ void Map::criPath(int start, int end, Map & reEdge, YenPath & edgepath){
 	init.totalLen = dis[start].val;   init.Pre = start;   init.X = init.node[1];
 	init.h = dis[start].val;
 	
-	priority_queue<YenPath, vector<YenPath>, Yencmp> q;
-	q.push(init);
+	priority_queue<YenPath*, vector<YenPath*>, Yencmp> q;
+	q.push(&init);
 	bool flag = true; // whether is operating the shortest path
 	bool ansflag = false; // whether path is found
+
 	while(!q.empty()){
-		YenPath tmp = q.top();   q.pop();
+		YenPath tmp = *q.top();  //delete q.top();   
+		q.pop();
 		if(checkValid(start, end, tmp.node)){
 			edgepath = tmp;   ansflag = true;   break;
 		}
@@ -177,10 +182,11 @@ void Map::criPath(int start, int end, Map & reEdge, YenPath & edgepath){
 		
 		reEdge.shortestPath(end, dis, valid); // get shortest path from end
 		
-		tmp.len = tmp.totalLen;   tmp.x = tmp.node.size() - 1;   tmp.pre = tmp.x - 1;
+		tmp.len = tmp.totalLen;   tmp.x = tmp.node.size();   tmp.x--;   tmp.pre = tmp.x - 1;
 		// set init value
+
 		while(tmp.node[tmp.x] != tmp.Pre){
-			int x = tmp.node[tmp.x];
+			int x = tmp.node[tmp.x];	
 			int pre = tmp.node[tmp.pre];
 			if(valid[x] == false){
 				valid[x] = true;
@@ -190,34 +196,46 @@ void Map::criPath(int start, int end, Map & reEdge, YenPath & edgepath){
 				if(v[pre].e[i].edgeID == tmp.edge[tmp.x]){
 					tmp.len -= v[pre].e[i].val;   break;
 				}// update tmp.len : from start to pre
-			priority_queue<YenNewPath, vector<YenNewPath>, YenNewPathcmp> newq;// queue of new path
+			priority_queue<YenNewPath*, vector<YenNewPath*>, YenNewPathcmp> newq;// queue of new path
+
+
 			for(int i = 0; i < v[pre].e.size(); i++){
 				if(valid[v[pre].e[i].to] == false)continue;
 				if(v[pre].e[i].edgeID == tmp.edge[tmp.x])continue;
-				YenNewPath newstate;
-				newstate.edgeID = v[pre].e[i].edgeID;
-				newstate.x = v[pre].e[i].to;
-				newstate.h = tmp.len + v[pre].e[i].val + dis[v[pre].e[i].to].val;
+				if(dis[v[pre].e[i].to].val == INF)continue;
+				YenNewPath* newstate = new YenNewPath();
+				newstate -> edgeID = v[pre].e[i].edgeID;
+				newstate -> x = v[pre].e[i].to;
+				newstate -> h = tmp.len + v[pre].e[i].val + dis[v[pre].e[i].to].val;
 				// h fuction may need change
-				newstate.edgeLen = v[pre].e[i].val;
+				newstate -> edgeLen = v[pre].e[i].val;
 				newq.push(newstate);
 			}// find all the deviation states
-			while(!newq.empty() && ((flag == true && newq.top().h < tmp.h) || 
-				(flag == false && newq.top().h <= tmp.h)))newq.pop(); 
+
+			while(!newq.empty() && ((flag == true && newq.top() -> h < tmp.h) || 
+				(flag == false && newq.top() -> h <= tmp.h))){
+					//delete newq.top(); 
+					newq.pop(); 
+			}
 			// ignore repeat states
+
 			if(!newq.empty()){
-				YenNewPath curP = newq.top();
+				YenNewPath curP = *newq.top();   //delete newq.top();
 				newq.pop();
-				YenPath newstate;
+				YenPath* newstate = new YenPath();
 				makeNewstate(end, newstate, curP, tmp, dis);
-				q.push(newstate);
+				q.push(newstate);   		
 				// add the shortest new path to q
+								
 				int lasth = curP.h;
-				while(!newq.empty() && newq.top().h == lasth){
-					curP = newq.top();   newq.pop();
+				while(!newq.empty() && newq.top() -> h == lasth){
+					curP = *newq.top();   //delete newq.top();   
+					newq.pop();
+					newstate = new YenPath();
 					makeNewstate(end, newstate, curP, tmp, dis);
 					q.push(newstate);
 				}// add other new path with the same h val to q
+				
 			}
 			tmp.pre--;   tmp.x--;
 		}
