@@ -6,7 +6,7 @@
 #include<string>
 
 
-int display( char filename[] ) {
+int display( std::string filename ) {
 	std::cout<< "display content of " << filename << std::endl;
 	std::cout<< "---------------\n";
 
@@ -79,6 +79,8 @@ int mainTest() {
 
 
 	inputMap(std::string("topo.csv"), std::string("demand.csv"), omap, isCritical);
+	display("topo.csv" );
+	display("demand.csv" );
 
 	/*
 	std::vector<Map> SCC;
@@ -87,7 +89,7 @@ int mainTest() {
 	printSCC( SCC, SCCMap );
 	*/
 
-	//testcriPath(omap);
+	testcriPath(omap);
 
 	return 0;
 }

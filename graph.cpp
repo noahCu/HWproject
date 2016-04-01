@@ -46,8 +46,6 @@ Vertex & Map::operator[]( int x ) {
 
 Map::Map() {
 	N = M = -1;
-	s.resize(1);
-	t.resize(1);
 }
 
 int Map::push_back( int x ) {
