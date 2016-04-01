@@ -5,16 +5,32 @@ void BigMap::addEdge( int from, int to, int ifrom, int ito, int val, int id) {
 	innerEdge[from].push_back( Edge( ifrom, ito, val, id ) );
 }
 
+int remove(const Map & omap, const int farA[], bool removed[], int x, int acs) {
+	if (removed[x] == 1) return 0;
+	if (farA[x] != acs) return 0;
+	removed[x] = 1;
+	for (auto itr = omap[x].begin(); itr != omap[x].end(); itr++) remove(omap, farA, removed, itr->to, acs);
+	return 1;
+}
+
+int far( int farA[], int x ) {
+	if (farA[x] == x) return x;
+	farA[x] = far( farA, farA[x] );
+	return farA[x];
+}
+
 int tarjan( const Map &omap, bool * removed, int * farA, int * height, int now, int now_height) { //return the height that vertex 'now' can reach 
-	if (height[now] != -1) return height[ farA[ now ] ];
+	if (removed[ now ] == 1) return INF;
+	if (height[now] != -1) return height[ far( farA, now ) ];
+	farA[ now ] = now;
 	height[now] = now_height;
 	for ( auto edge = omap[now].begin(); edge != omap[now].end(); edge++) {
-		if (!removed[ farA[ edge->to] ] && tarjan( omap, removed, farA, height, edge->to, now_height + 1) < height[ farA[now] ] ) {
-			farA[ now ] = farA[ edge->to ];
+		if (!removed[ far( farA, edge->to ) ] && tarjan( omap, removed, farA, height, edge->to, now_height + 1) < height[ farA[now] ] ) {
+			farA[ now ] = far( farA, edge->to );
 		}
 	}
-	if (farA[ now ] == now) removed[ now ] = 1;
-	return height[ farA[ now ] ];
+	if (farA[ now ] == now) remove(omap, farA, removed, now, now);
+	return height[ far( farA, now ) ];
 }
 	
 
@@ -31,7 +47,8 @@ std::vector<int> findBelong( const Map & omap ) {
 		height[i] = -1; //height[i] = - 1 indicates that i is not visited yet.
 	}
 
-	tarjan( omap, removed, farA, height, *omap.s.begin(), 0 );
+	for (int i = 0; i < mapsize; i++) if ( removed[i] == 0 )
+		tarjan( omap, removed, farA, height, i, 0);
 
 	std::map< int, int > idxRef;
 	int cnt = 0;

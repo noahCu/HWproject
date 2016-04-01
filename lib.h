@@ -5,6 +5,7 @@
 #include<set>
 #include<string>
 #include<queue>
+#define INF 100000
 
 class SPath{
 	public:
