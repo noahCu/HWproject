@@ -17,7 +17,8 @@ int display( std::string filename ) {
 		if (ch == EOF) break;
 		std::cout<< ch;
 	}
-	std::cout<< "---------------\n";
+	std::cout<<std::endl;
+	std::cout<< "---------------\n"<< std::endl;
 }
 
 int printSCC(const std::vector<Map> & SCC, const BigMap & SCCMap) {
@@ -52,7 +53,7 @@ void make_data( int N, int M, int K) {
 		do { c = rand() % N; } while ( used[c] );
 		used[c] = 1;
 		demand << c;
-		if ( K != 1 ) demand<< '|';
+		if ( K != 0 ) demand<< '|';
 	}
 
 }
@@ -65,6 +66,7 @@ void testcriPath(Map & omap) {
 	omap.criPath( omap.s[0], omap.t[0], reEdge, res);
 	if ( res.edge.empty() ) std::cout<< "no possible res\n";
 	for (auto itr = res.edge.begin(); itr != res.edge.end(); itr++) std::cout<< *itr << " -> ";
+	std::cout<< std::endl;
 }
 	
 
@@ -73,9 +75,9 @@ int mainTest() {
 	std::map< int, bool> isCritical;
 
 
-	//int N = 600, M = 600 * 8, K = 0;
-	//std::cin >> N >> M >> K;
-	//make_data( N, M, K);
+	int N = 600, M = 600 * 8, K = 0;
+	std::cin >> N >> M >> K;
+	make_data( N, M, K);
 
 
 	inputMap(std::string("topo.csv"), std::string("demand.csv"), omap, isCritical);
