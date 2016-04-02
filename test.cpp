@@ -5,6 +5,16 @@
 #include"lib.h"
 #include<string>
 
+void print( const Edge & e) {
+	std::cout << "(" << e.edgeID << ", " << e.from << ", " << e.to << ", " << e.val << ")";
+}
+
+void Map::display(const YenPath & path ){
+	std::cout << std::endl <<"path:" ;
+	for (auto itr = path.e.begin(); itr != path.e.end(); itr++) std::cout << v[ (*itr)->from ].ID <<"->";
+	std::cout<< v[ (*path.e.rbegin())->to ].ID << std::endl;
+	std::cout<< "len is: "<< path.g + path.h<< std::endl;
+}
 
 int display( std::string filename ) {
 	std::cout<< "display content of " << filename << std::endl;
@@ -35,12 +45,12 @@ void make_data( int N, int M, int K) {
 	std::ofstream topo;
 	topo.open( "topo.csv" );
 	srand( time(NULL) );
-	while (M-- > 0 ) {
+	for (int i = 0 ; i < M; i++) {
 		int from, to, val;
-		val = rand() % 10;
+		val = rand() % 20;
 		do { from = rand() % N; } while ( cnt[from] > 7);
 		to = rand() % N;
-		topo<< M << ',' << from << ',' << to << ',' << val << std::endl;
+		topo<< i << ',' << from << ',' << to << ',' << val << std::endl;
 	}
 	topo.close();
 	
@@ -62,10 +72,13 @@ void make_data( int N, int M, int K) {
 void testcriPath(Map & omap) {
 	YenPath res;
 	Map reEdge;
-	omap.reverse(reEdge);
-	omap.criPath( omap.s[0], omap.t[0], reEdge, res);
-	if ( res.edge.empty() ) std::cout<< "no possible res\n";
-	for (auto itr = res.edge.begin(); itr != res.edge.end(); itr++) std::cout<< *itr << " -> ";
+	omap.reverse();
+	res = omap.criPath( omap.s[0], omap.t[0]);
+	if ( res.e.empty() ) std::cout<< "no possible res\n";
+	for (auto itr = res.e.begin(); itr != res.e.end(); itr++) {
+		print( **itr );
+		std::cout<< "->";
+	}
 	std::cout<< std::endl;
 }
 	
@@ -76,8 +89,13 @@ int mainTest() {
 
 
 	int N = 600, M = 600 * 8, K = 0;
-	std::cin >> N >> M >> K;
-	make_data( N, M, K);
+	std::cout << "make new Data ? (1/0)\n";
+	int x;
+	std::cin>>x;
+	if (x == 1) {
+		std::cin >> N >> M >> K;
+		make_data( N, M, K);
+	}
 
 
 	inputMap(std::string("topo.csv"), std::string("demand.csv"), omap, isCritical);

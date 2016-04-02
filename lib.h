@@ -7,6 +7,7 @@
 #include<queue>
 #define INF 100000
 
+/*
 class SPath{
 	public:
 		int pre;
@@ -15,6 +16,8 @@ class SPath{
 		int preEdge;
 	private:
 };
+*/
+
 
 class Edge{
 	public: 
@@ -44,7 +47,9 @@ class Vertex{
 	    bool isDomin;
 	private:
 };
-	
+
+
+/*
 class YenPath{
 	public:
 		std::vector<int> node;
@@ -57,7 +62,36 @@ class YenPath{
 		int h; // val of A* function
 	private:
 };
+*/
+class SPath{
+	public:
+		Edge* e;
+		int val;
+		SPath(Edge* e, int val) {
+			this->e = e;
+			this->val = val;
+		}
+		SPath() {
+			e = NULL;
+			val = INF;
+		}
+};
 
+class YenPath{
+	public:
+		YenPath() { g= h = INF; }
+		std::vector<Edge*> e;
+		std::vector<Edge*>::iterator x;
+		int g, h;
+		void push_back(const SPath & newe) {
+			e.push_back(newe.e);
+		}
+
+		void addPath( const std::vector<SPath> & dis, int end );
+	private:
+};
+
+/*
 struct Yencmp{
 	bool operator()(YenPath* a, YenPath* b){
 		return a -> h > b -> h;
@@ -78,6 +112,7 @@ struct YenNewPathcmp{
 		return a -> h > b -> h;
 	}
 };
+*/
 
 
 class Map{
@@ -92,16 +127,33 @@ class Map{
 		bool findDominatorPath(int x, int end, bool vis[], std::vector<int> & path);
 		int traverse(int x, int end, int vis[], Map & newD);
 		int pathInSCC(int start, int end, std::vector<int> & path);
-		void reverse(Map & reEdge);
-		void shortestPath(int start, std::vector<SPath> & dis, bool valid[]);
-		void criPath(int start, int end, Map & reEdge, YenPath & edgepath);
-		bool checkValid(int start, int end, std::vector<int> & path);
-		void updateSPath(int newnode, int start, std::vector<SPath> & dis, bool valid[], Map & reEdge);
+		void reverse();
+
+		// pathInsideSCC part
+		//void shortestPath(int start, std::vector<SPath> & dis, bool valid[]);
+		void shortestPath( int start, const std::vector<bool> &valid, std::vector<SPath> &dis);
+
+		//void criPath(int start, int end, Map & reEdge, YenPath & edgepath);
+		YenPath criPath( int start, int end );
+		//bool checkValid(int start, int end, std::vector<int> & path);
+		bool checkValid( const std::vector<int> & criList, const YenPath & path );
+		//void updateSPath(int newnode, int start, std::vector<SPath> & dis, bool valid[], Map & reEdge);
+		void SPFA(int, const std::vector<bool> &, std::vector<SPath> &);
+		YenPath Init( std::vector<SPath> &, std::vector<bool> &, int, int);
+		std::vector< YenPath* > makeState( YenPath & );
+		void updateSPath( int newnode, int start, const std::vector<bool> & valid, std::vector<SPath> & dis );
+		Edge* P2R( Edge * P );
+		void display( const YenPath & );
+		Edge* R2P( Edge * R );
+		//------------------------------
+		
+
 		int size() const;
 		int N, M;
 		std::vector<int> s;
 		std::vector<int> t;
 		std::vector<Vertex> v;
+		Map * reEdge;
 	private:
 };
 

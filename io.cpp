@@ -10,7 +10,9 @@ void inputMap( string mapfile, string cfile, Map & omap, std::map<int, bool> & i
 	int from, to, val, edgeID;
 	char comma;
 	while (!mapRead.eof()) {
+		val = -1;
 		mapRead >> edgeID >> comma >> from >> comma >> to >> comma >> val;
+		if (val == -1 ) break;
 		if (idRef.find(from) == idRef.end()) {
 			idRef[from] = omap.push_back( from );
 		}
@@ -32,7 +34,9 @@ void inputMap( string mapfile, string cfile, Map & omap, std::map<int, bool> & i
 
 	int cri;
 	while (!cRead.eof()) {
+		cri = -1;
 		cRead >> cri >> ch;
+		if (cri == -1) break;
 		isCritical[ idRef[cri] ] = 1;
 		omap[ idRef[cri] ].isCritical = 1;
 	}
