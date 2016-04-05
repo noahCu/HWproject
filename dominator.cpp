@@ -26,12 +26,12 @@ bool Map::findDominatorPath(int x, int end, bool vis[], std::vector<int> & path)
 }
 
 void Map::findDominator(int start, int end){
-	for(int i = 0; i < N; i++){
+	for(int i = 0; i < v.size(); i++){
 		if(i == start)v[start].isDomin = true;
 		else if(i == end)v[end].isDomin = true;
 		else{
-			bool vis[N + 5];
-			for(int j = 0; j < N; j++)vis[j] = false;
+			bool vis[v.size() + 5];
+			for(int j = 0; j < v.size(); j++)vis[j] = false;
 			vis[i] = true;
 			std::vector<int> path;
 			path.clear();
@@ -61,8 +61,8 @@ int Map::traverse(int x, int end, int vis[], Map & newD){
 
 void Map::divideByDominator(int start, int end, std::vector< Map > & D){
 	findDominator(start, end);
-	bool vis[N + 5];
-	for(int i = 0; i < N; i++)vis[i] = false;
+	bool vis[v.size() + 5];
+	for(int i = 0; i < v.size(); i++)vis[i] = false;
 	std::vector<int> path;
 	path.clear();
 	findDominatorPath(start, end, vis, path);
@@ -78,8 +78,8 @@ void Map::divideByDominator(int start, int end, std::vector< Map > & D){
 			D[tmp].s.clear();
 			D[tmp].t.clear();
 			D[tmp].v.clear();
-			int vis[N + 5];
-			for(int j = 0; j < N; j++)vis[j] = -1;
+			int vis[v.size() + 5];
+			for(int j = 0; j < v.size(); j++)vis[j] = -1;
 			traverse(last, cur, vis, D[tmp]);
 			D[tmp].s.push_back(vis[last]);
 			D[tmp].t.push_back(vis[cur]);

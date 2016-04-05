@@ -5,6 +5,7 @@
 #include<set>
 #include<string>
 #include<queue>
+#include<set>
 #define INF 100000
 
 class SPath{
@@ -54,12 +55,14 @@ class YenPath{
 		int len; // from start to pre
 		int totalLen; // from start to end
 		int X, Pre; // X and Pre of this state, vertex, not index in node[]
-		int h; // val of A* function
+		double h; // val of A* function
+		int numCri; // number of critical
 	private:
 };
 
 struct Yencmp{
 	bool operator()(YenPath* a, YenPath* b){
+		//if(a -> numCri != b -> numCri)return a -> numCri > b -> numCri;
 		return a -> h > b -> h;
 	}
 };
@@ -79,6 +82,17 @@ struct YenNewPathcmp{
 	}
 };
 
+class YenCri{
+	public:
+		int x;    int lenToT;
+	private:
+};
+
+struct YenCricmp{
+	bool operator()(YenCri a, YenCri b){
+		return a.lenToT < b.lenToT; 
+	}
+};
 
 class Map{
 	public:
@@ -95,8 +109,9 @@ class Map{
 		void reverse(Map & reEdge);
 		void shortestPath(int start, std::vector<SPath> & dis, bool valid[]);
 		void criPath(int start, int end, Map & reEdge, YenPath & edgepath);
+		void criPathold(int start, int end, Map & reEdge, YenPath & edgepath);
 		bool checkValid(int start, int end, std::vector<int> & path);
-		void updateSPath(int newnode, int start, std::vector<SPath> & dis, bool valid[], Map & reEdge);
+		void updateSPath(int newnode, int start, std::vector<SPath> & dis, bool valid[], Map & reEdge, std::set<YenCri, YenCricmp> & criq);
 		int size() const;
 		int N, M;
 		std::vector<int> s;

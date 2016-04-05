@@ -36,7 +36,7 @@ void make_data( int N, int M, int K) {
 	srand( time(NULL) );
 	while (M-- > 0 ) {
 		int from, to, val;
-		val = rand() % 10;
+		val = rand() % 21;
 		do { from = rand() % N; } while ( cnt[from] > 7);
 		to = rand() % N;
 		topo<< M << ',' << from << ',' << to << ',' << val << std::endl;
@@ -62,9 +62,23 @@ void testcriPath(Map & omap) {
 	YenPath res;
 	Map reEdge;
 	omap.reverse(reEdge);
+	/*omap.criPathold( omap.s[0], omap.t[0], reEdge, res);
+	if ( res.edge.empty() ) std::cout<< "no possible res\n";
+	int len = 0;
+	std::cout<< res.totalLen <<std::endl;
+	for (auto itr = res.edge.begin(); itr != res.edge.end(); itr++)std::cout<< *itr << " -> ";
+	std::cout<< std::endl;
+	for (auto itr = res.node.begin(); itr != res.node.end(); itr++)std::cout<< omap[*itr].ID << " -> ";
+
+	std::cout<< std::endl;	std::cout<< std::endl;
+*/
+	res.totalLen = 0;
 	omap.criPath( omap.s[0], omap.t[0], reEdge, res);
 	if ( res.edge.empty() ) std::cout<< "no possible res\n";
-	for (auto itr = res.edge.begin(); itr != res.edge.end(); itr++) std::cout<< *itr << " -> ";
+	std::cout<< res.totalLen <<std::endl;
+	for (auto itr = res.edge.begin(); itr != res.edge.end(); itr++)std::cout<< *itr << " -> ";
+	std::cout<< std::endl;
+	for (auto itr = res.node.begin(); itr != res.node.end(); itr++)std::cout<< omap[*itr].ID << " -> ";
 }
 	
 
@@ -73,14 +87,20 @@ int mainTest() {
 	std::map< int, bool> isCritical;
 
 
-	//int N = 600, M = 600 * 8, K = 0;
+	int N = 600, M = 600 * 8, K = 50;
 	//std::cin >> N >> M >> K;
-	//make_data( N, M, K);
+	make_data( N, M, K);
 
 
 	inputMap(std::string("topo.csv"), std::string("demand.csv"), omap, isCritical);
 	display("topo.csv" );
 	display("demand.csv" );
+
+	/*Map reEdge;
+	omap.reverse(reEdge);
+	YenPath edgepath;
+	omap.criPath(omap.s[0], omap.t[0], reEdge, edgepath);
+	*/
 
 	/*
 	std::vector<Map> SCC;
@@ -90,6 +110,10 @@ int mainTest() {
 	*/
 
 	testcriPath(omap);
+
+	/*omap.findDominator(omap.s[0], omap.t[0]);
+	printDomin()
+	*/
 
 	return 0;
 }
