@@ -1,16 +1,13 @@
-ALLO = main.o io.o graph.o SCC.o dominator.o test.o pathInsideSCC.o
+ALLO = main.o io.o graph.o SCC.o dominator.o pathInsideSCC.o
 CFLAG = -g -c -std=c++11
 
-all: HW
+all: future_net
 
-HW: ${ALLO}
-	g++ -g ${ALLO} -o HW
+future_net: ${ALLO}
+	g++ -g ${ALLO} -o future_net
 
 main.o: main.cpp lib.h
 	g++ ${CFLAG} main.cpp
-
-test.o: test.cpp lib.h
-	g++ ${CFLAG} test.cpp
 
 io.o: io.cpp lib.h
 	g++ ${CFLAG} -std=c++11 io.cpp

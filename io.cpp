@@ -2,7 +2,7 @@
 #include<fstream>
 using namespace std;
 
-void inputMap( string mapfile, string cfile, Map & omap, std::map<int, bool> & isCritical) {
+int inputMap( string mapfile, string cfile, Map & omap, std::map<int, bool> & isCritical) {
 	ifstream mapRead(mapfile.c_str());
 	ifstream cRead(cfile.c_str());
 	std::map<int, int> idRef;
@@ -31,15 +31,19 @@ void inputMap( string mapfile, string cfile, Map & omap, std::map<int, bool> & i
 	omap[ idRef[t] ].isCritical = 1;
 
 	int cri;
+	int crinum = 0;
 	while (!cRead.eof()) {
 		cRead >> cri >> ch;
 		isCritical[ idRef[cri] ] = 1;
 		omap[ idRef[cri] ].isCritical = 1;
+		crinum++;
 	}
 
 
 	mapRead.close();
 	cRead.close();
+	
+	return crinum;
 }
 
 void outputRes( const vector<int> & path, const string & outputfile) {

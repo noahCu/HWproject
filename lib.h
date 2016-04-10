@@ -108,8 +108,8 @@ class Map{
 		int pathInSCC(int start, int end, std::vector<int> & path);
 		void reverse(Map & reEdge);
 		void shortestPath(int start, std::vector<SPath> & dis, bool valid[]);
-		void criPath(int start, int end, Map & reEdge, YenPath & edgepath);
-		void criPathold(int start, int end, Map & reEdge, YenPath & edgepath);
+		void criPath(int start, int end, Map & reEdge, YenPath & edgepath, double time);
+		void criPathold(int start, int end, Map & reEdge, std::vector<YenPath> & edgepath);
 		bool checkValid(int start, int end, std::vector<int> & path);
 		void updateSPath(int newnode, int start, std::vector<SPath> & dis, bool valid[], Map & reEdge, std::set<YenCri, YenCricmp> & criq);
 		int size() const;
@@ -136,8 +136,10 @@ class BigMap: public Map {
 void setSCC( const Map & omap, std::vector<Map> & SCC, BigMap & SCCmap );
 std::vector<int> indPath( std::vector<Map> & SCC, const Map & SCCmap);
 
-void inputMap( std::string mapfile, std::string criticalfile, Map & omap, std::map<int, bool> & isCritical);
+int inputMap( std::string mapfile, std::string criticalfile, Map & omap, std::map<int, bool> & isCritical);
 void outputRes( const std::vector<int> & path, const std::string & outputfile);
+
+void betterPath(int start, int end, Map & omap, Map & reEdge, std::vector<YenPath> & cur, YenPath & edgepath, double time);
 
 int mainTest();
 #endif

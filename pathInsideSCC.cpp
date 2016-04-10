@@ -6,6 +6,7 @@
 #include <queue>
 #include <list>
 #include <set>
+#include <time.h>
 #include "lib.h"
 #define INF 100000
 
@@ -161,15 +162,15 @@ struct Yenanscmp{
 	}
 };
 
-void Map::criPathold(int start, int end, Map & reEdge, YenPath & edgepath){
+void Map::criPathold(int start, int end, Map & reEdge, std::vector<YenPath> & edgepath){
 	std::vector<SPath> dis;
 	bool valid[v.size() + 5];
 	for(int i = 0; i < v.size(); i++)valid[i] = true;
+	clock_t be = clock();
 	
 	reEdge.shortestPath(end, dis, valid);
 	if(dis[start].val == INF){
-		edgepath.node.clear();
-		edgepath.edge.clear();
+		edgepath.clear();
 		return;
 	}
 
@@ -202,8 +203,11 @@ void Map::criPathold(int start, int end, Map & reEdge, YenPath & edgepath){
 		if(checkValid(start, end, tmp.node)){
 			ansflag = true;
 			numans++;	ansq.push(tmp);
-			if(numans >= 1)break;
+			if(numans >= 100000)break;
 		}
+		
+		clock_t ed = clock();
+		if((ed - be) / CLOCKS_PER_SEC > 3.5)break;
 		
 		for(int i = 0; i < v.size(); i++)valid[i] = true;
 		for(int i = 0; i < tmp.node.size(); i++)
@@ -251,7 +255,8 @@ void Map::criPathold(int start, int end, Map & reEdge, YenPath & edgepath){
 
 
 			//priority_queue<YenNewPath*, vector<YenNewPath*>, YenNewPathcmp> newq;// queue of new path
-
+			int numOfCri = 0;
+			for(int i = 0; i < v.size(); i++)if(v[i].isCritical)numOfCri++;
 
 			for(int i = 0; i < v[pre].e.size(); i++){
 				if(valid[v[pre].e[i].to] == false)continue;
@@ -262,7 +267,12 @@ void Map::criPathold(int start, int end, Map & reEdge, YenPath & edgepath){
 				newstate -> numCri = -1;
 				for(int j = 0; j < newstate -> node.size(); j++)
 					if(v[newstate -> node[j]].isCritical)newstate -> numCri++;
-				newstate -> h =  (double)newstate -> totalLen/newstate -> numCri;
+				newstate -> h =  (double)newstate -> totalLen/newstate -> numCri
+						+ v.size() * 5 * 
+						(double)(numOfCri - newstate -> numCri) / 
+						(v.size() - newstate -> node.size());
+						//+ v.size() * 0.5 * 
+						//(1.0 - (double)newstate -> numCri / numOfCri);
 				// h fuction may need change
 				//if(newstate -> numCri < tmp.numCri)delete newstate;
 				//else 
@@ -307,12 +317,228 @@ void Map::criPathold(int start, int end, Map & reEdge, YenPath & edgepath){
 		//delete &tmp;
 	}
 	if(ansflag == false){
-		edgepath.node.clear();
-		edgepath.edge.clear();
+		edgepath.clear();
+		edgepath.clear();
 	}else{
-		edgepath = ansq.top();
+		int l = 2000;
+		if(l > ansq.size())l = ansq.size();
+		for(int i = 0; i < l; i++){
+			edgepath.push_back(ansq.top());
+			ansq.pop();
+		}
 	}
 	// ans
+	//printf("%d\n", numans);
+}
+
+struct bettercmp{
+	bool operator()(YenPath* a, YenPath* b){
+		return a->totalLen > b->totalLen;
+	}
+};
+
+void makeNewPart(int from, int to, YenPath* newstate, std::vector<SPath> & dis, bool valid[]){
+	valid[from] = 0;
+	int curver = dis[from].pre;
+	newstate -> edge.push_back(dis[from].preEdge);
+	while(curver != to){
+		valid[curver] = 0;
+		newstate -> node.push_back(curver);
+		newstate -> edge.push_back(dis[curver].preEdge);
+		curver = dis[curver].pre;
+	}
+	newstate -> node.push_back(to);
+}
+
+void getlen(YenPath* newstate, Map & omap){
+	int last = newstate->node[0];
+	newstate->totalLen = 0;
+	for(int i = 1; i < newstate->node.size(); i++){
+		for(int j = 0; j < omap[last].e.size(); j++){
+			if(omap[last][j].edgeID == newstate->edge[i]){
+				newstate->totalLen += omap[last][j].val;
+				break;
+			}
+		}
+		last = newstate->node[i];
+	}
+}
+
+void betterPath(int start, int end, Map & omap, Map & reEdge, std::vector<YenPath> & cur, YenPath & edgepath, double time){
+	if(cur.size() == 0)return;
+	clock_t be = clock();
+	priority_queue<YenPath*, deque<YenPath*>, bettercmp> q;
+	edgepath = cur[0];
+	for(int i = 0; i < cur.size(); i++)q.push(&cur[i]);
+	while(!q.empty()){
+		YenPath & tmp = *q.top();	q.pop();
+		if(tmp.totalLen < edgepath.totalLen){
+			//delete &edgepath;
+			edgepath = tmp;
+		}// update ans
+		
+		clock_t ed = clock();
+		if((ed - be) / CLOCKS_PER_SEC > time)return;
+		
+		int last1Cri = 0;
+		while(!omap[tmp.node[last1Cri]].isCritical)last1Cri++;
+		int cur1Cri = last1Cri + 1;
+		while(!omap[tmp.node[cur1Cri]].isCritical)cur1Cri++;
+		if(tmp.node[cur1Cri] == end)return;
+		int cur2Cri = cur1Cri + 1;
+		while(!omap[tmp.node[cur2Cri]].isCritical)cur2Cri++;
+		if(tmp.node[cur2Cri] == end)return;
+		int next2Cri = cur2Cri + 1;
+		while(!omap[tmp.node[next2Cri]].isCritical)next2Cri++;
+		// find last and next Cri, init
+		
+		bool valid[omap.v.size() + 5];
+		while(1){
+			for(int i = 0; i < omap.v.size(); i++)valid[i] = 1;
+			for(int i = 0; i < tmp.node.size(); i++)valid[tmp.node[i]] = 0;
+			int next1Cri = cur1Cri + 1;
+			while(!omap[tmp.node[next1Cri]].isCritical)next1Cri++;
+			int last2Cri = cur2Cri - 1;
+			while(!omap[tmp.node[last2Cri]].isCritical)last2Cri--;
+			if(next1Cri == cur2Cri){
+				for(int i = last1Cri; i <= next2Cri; i++)valid[tmp.node[i]] = 1;
+				YenPath* newstate = new YenPath;
+				for(int i = 0; i <= last1Cri; i++){
+					newstate->node.push_back(tmp.node[i]);
+					newstate->edge.push_back(tmp.edge[i]);
+				}
+				
+				std::vector<SPath> dis;
+				valid[tmp.node[cur1Cri]] = 0;
+				valid[tmp.node[next2Cri]] = 0;
+				reEdge.shortestPath(tmp.node[cur2Cri], dis, valid);
+				valid[tmp.node[cur1Cri]] = 1;
+				valid[tmp.node[next2Cri]] = 1;
+				if(dis[tmp.node[last1Cri]].val == INF){
+					delete newstate;
+					goto jump;
+				}
+				makeNewPart(tmp.node[last1Cri], tmp.node[cur2Cri], newstate, dis, valid);
+				
+				valid[tmp.node[next2Cri]] = 0;
+				reEdge.shortestPath(tmp.node[cur1Cri], dis, valid);
+				valid[tmp.node[next2Cri]] = 1;
+				if(dis[tmp.node[cur2Cri]].val == INF){
+					delete newstate;
+					goto jump;
+				}
+				makeNewPart(tmp.node[cur2Cri], tmp.node[cur1Cri], newstate, dis, valid);
+
+				reEdge.shortestPath(tmp.node[next2Cri], dis, valid);
+				if(dis[tmp.node[cur1Cri]].val == INF){
+					delete newstate;
+					goto jump;
+				}
+				makeNewPart(tmp.node[cur1Cri], tmp.node[next2Cri], newstate, dis, valid);
+				
+				for(int i = next2Cri + 1; i < tmp.node.size(); i++){
+					newstate->node.push_back(tmp.node[i]);
+					newstate->edge.push_back(tmp.edge[i]);
+				}
+				
+				getlen(newstate, omap);
+				if(newstate->totalLen > tmp.totalLen){
+					delete newstate;
+					goto jump;
+				}
+				q.push(newstate);
+			}else{
+				for(int i = last1Cri; i <= next1Cri; i++)valid[tmp.node[i]] = 1;
+				for(int i = last2Cri; i <= next2Cri; i++)valid[tmp.node[i]] = 1;
+				YenPath* newstate = new YenPath;
+				for(int i = 0; i <= last1Cri; i++){
+					newstate->node.push_back(tmp.node[i]);
+					newstate->edge.push_back(tmp.edge[i]);
+				}
+				
+				std::vector<SPath> dis;
+				valid[tmp.node[cur1Cri]] = 0;
+				valid[tmp.node[next1Cri]] = 0;
+				valid[tmp.node[last2Cri]] = 0;
+				valid[tmp.node[next2Cri]] = 0;
+				reEdge.shortestPath(tmp.node[cur2Cri], dis, valid);
+				valid[tmp.node[cur1Cri]] = 1;
+				valid[tmp.node[next1Cri]] = 1;
+				valid[tmp.node[last2Cri]] = 1;
+				valid[tmp.node[next2Cri]] = 1;
+				if(dis[tmp.node[last1Cri]].val == INF){
+					delete newstate;
+					goto jump;
+				}
+				makeNewPart(tmp.node[last1Cri], tmp.node[cur2Cri], newstate, dis, valid);
+				
+				valid[tmp.node[cur1Cri]] = 0;
+				valid[tmp.node[last2Cri]] = 0;
+				valid[tmp.node[next2Cri]] = 0;
+				reEdge.shortestPath(tmp.node[next1Cri], dis, valid);
+				valid[tmp.node[cur1Cri]] = 1;
+				valid[tmp.node[last2Cri]] = 1;
+				valid[tmp.node[next2Cri]] = 1;
+				if(dis[tmp.node[cur2Cri]].val == INF){
+					delete newstate;
+					goto jump;
+				}
+				makeNewPart(tmp.node[cur2Cri], tmp.node[next1Cri], newstate, dis, valid);
+				valid[tmp.node[next1Cri]] = 0;
+				
+				for(int i = next1Cri + 1; i <= last2Cri; i++){
+					newstate->node.push_back(tmp.node[i]);
+					newstate->edge.push_back(tmp.edge[i]);
+				}
+				
+				valid[tmp.node[next2Cri]] = 0;
+				reEdge.shortestPath(tmp.node[cur1Cri], dis, valid);
+				valid[tmp.node[next2Cri]] = 1;
+				if(dis[tmp.node[last2Cri]].val == INF){
+					delete newstate;
+					goto jump;
+				}
+				makeNewPart(tmp.node[last2Cri], tmp.node[cur1Cri], newstate, dis, valid);
+				
+				reEdge.shortestPath(tmp.node[next2Cri], dis, valid);
+				if(dis[tmp.node[cur1Cri]].val == INF){
+					delete newstate;
+					goto jump;
+				}
+				makeNewPart(tmp.node[cur1Cri], tmp.node[next2Cri], newstate, dis, valid);
+				
+				for(int i = next2Cri + 1; i < tmp.node.size(); i++){
+					newstate->node.push_back(tmp.node[i]);
+					newstate->edge.push_back(tmp.edge[i]);
+				}
+				
+				getlen(newstate, omap);
+				if(newstate->totalLen >= tmp.totalLen){
+					delete newstate;
+					goto jump;
+				}
+				q.push(newstate);
+			}
+			// newstate
+			
+			jump:
+			if(tmp.node[next2Cri] == end){
+				if(next1Cri == cur2Cri)break;
+				last1Cri = cur1Cri;
+				cur1Cri = next1Cri;
+				cur2Cri = cur1Cri + 1;
+				while(!omap[tmp.node[cur2Cri]].isCritical)cur2Cri++;
+				next2Cri = cur2Cri + 1;
+				while(!omap[tmp.node[next2Cri]].isCritical)next2Cri++;
+			}else{
+				cur2Cri = next2Cri;
+				next2Cri = cur2Cri + 1;
+				while(!omap[tmp.node[next2Cri]].isCritical)next2Cri++;
+			}
+			
+		}
+		//delete &tmp;
+	}
 }
 
 void makeNewstate_v2(int start, int end, int tar, YenPath* newstate, YenPath & tmp, std::vector<SPath> & dis, std::vector<SPath> & predis){
@@ -360,10 +586,11 @@ void makeNewstate_v2(int start, int end, int tar, YenPath* newstate, YenPath & t
 	newstate -> h = tmph;
 }
 
-void Map::criPath(int start, int end, Map & reEdge, YenPath & edgepath){
+void Map::criPath(int start, int end, Map & reEdge, YenPath & edgepath, double time){
 	std::vector<SPath> dis;
 	bool valid[v.size() + 5];
 	for(int i = 0; i < v.size(); i++)valid[i] = true;
+	clock_t be = clock();
 	
 	reEdge.shortestPath(end, dis, valid);
 	if(dis[start].val == INF){
@@ -401,8 +628,11 @@ void Map::criPath(int start, int end, Map & reEdge, YenPath & edgepath){
 		if(checkValid(start, end, tmp.node)){
 			ansflag = true;
 			numans++;	ansq.push(tmp);
-			if(numans >= 100000)break;
+			if(numans >= 10000)break;
 		}
+		
+		clock_t ed = clock();
+		if((ed - be) / CLOCKS_PER_SEC > time)break;
 		
 		for(int i = 0; i < v.size(); i++)valid[i] = true;
 		for(int i = 0; i < tmp.node.size(); i++)
@@ -466,8 +696,12 @@ void Map::criPath(int start, int end, Map & reEdge, YenPath & edgepath){
 			}
 
 			bool visCri[v.size() + 5];
-			for(int i = 0; i < v.size(); i++)visCri[i] = 0;
-			for(int k = 1; k <= 1;){
+			int numOfCri = 0;
+			for(int i = 0; i < v.size(); i++){
+				visCri[i] = 0;
+				if(v[i].isCritical)numOfCri++;
+			}
+			for(int k = 1; k <= 2;){
 				int tmpCri = -1, minn = INF;
 				for(int i = 0; i < v.size(); i++){
 					if(v[i].isCritical && !visCri[i] && minn > dis[i].val + predis[i].val){
@@ -479,9 +713,24 @@ void Map::criPath(int start, int end, Map & reEdge, YenPath & edgepath){
 				if(i == -1 || minn == INF)break;
 				visCri[i] = 1;
 				if(valid[i] == false)continue;
-					if(i == lastCri)continue;
+				if(i == lastCri)continue;
+					
+				int curver = i;
+				while(curver != pre){
+					if(curver != i)valid[curver] = 0;
+					curver = predis[curver].pre;
+				}
+				std::vector<SPath> diss;
+				reEdge.shortestPath(end, diss, valid);
+				curver = i;
+				while(curver != pre){
+					if(curver != i)valid[curver] = 1;
+					curver = predis[curver].pre;
+				}
+				if(diss[i].val == INF)continue;
+					
 					YenPath* newstate = new YenPath();
-					makeNewstate_v2(pre, end, i, newstate, tmp, dis, predis);
+					makeNewstate_v2(pre, end, i, newstate, tmp, diss, predis);
 					if(newstate -> X == -1){
 						delete newstate;	continue;
 					}
@@ -502,6 +751,9 @@ void Map::criPath(int start, int end, Map & reEdge, YenPath & edgepath){
 						if(v[newstate -> node[j]].isCritical)
 							newstate -> numCri++;
 					newstate -> h =  (double)newstate -> totalLen/newstate -> numCri;
+							+ (double)(numOfCri - newstate -> numCri) * 
+							v.size() * 5 / 
+							(v.size() - newstate -> node.size());
 					
 					q.push(newstate);
 					k++;
@@ -562,7 +814,7 @@ void Map::criPath(int start, int end, Map & reEdge, YenPath & edgepath){
 		edgepath = ansq.top();
 	}
 	// ans
-	printf("%d\n", numans);
+	//printf("%d\n", numans);
 }
 
 int Map::pathInSCC(int start, int end, std::vector<int> & path){// path store ID of edge
