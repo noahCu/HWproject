@@ -127,6 +127,7 @@ bool Map::checkValid(int start, int end, std::vector<int> & path){
 	if(path[0] != start || path[path.size() - 1] != end)return false;
 	int numOfCri = 0;
 	for(int i = 0; i < v.size(); i++)if(v[i].isCritical)numOfCri++;
+	for(int i = 0; i < path.size(); i++)if(path[i] == end && i != path.size() - 1)return false;
 	int ansCri = 0;
 	for(int i = 0; i < path.size(); i++)if(v[path[i]].isCritical)ansCri++;
 	if(ansCri == numOfCri)return true;
@@ -207,7 +208,7 @@ void Map::criPathold(int start, int end, Map & reEdge, std::vector<YenPath> & ed
 		}
 		
 		clock_t ed = clock();
-		if((ed - be) / CLOCKS_PER_SEC > 3.5)break;
+		if((ed - be) / CLOCKS_PER_SEC >= 3.5)break;
 		
 		for(int i = 0; i < v.size(); i++)valid[i] = true;
 		for(int i = 0; i < tmp.node.size(); i++)
@@ -267,12 +268,19 @@ void Map::criPathold(int start, int end, Map & reEdge, std::vector<YenPath> & ed
 				newstate -> numCri = -1;
 				for(int j = 0; j < newstate -> node.size(); j++)
 					if(v[newstate -> node[j]].isCritical)newstate -> numCri++;
+					
+				int numOfIn = 0;
+				for(int j = 0; j < newstate -> node.size(); j++)
+					numOfIn += reEdge[newstate->node[j]].e.size();
+				
 				newstate -> h =  (double)newstate -> totalLen/newstate -> numCri
-						+ v.size() * 5 * 
+						+ v.size() * 5 *
 						(double)(numOfCri - newstate -> numCri) / 
 						(v.size() - newstate -> node.size());
+						+ numOfIn;
 						//+ v.size() * 0.5 * 
 						//(1.0 - (double)newstate -> numCri / numOfCri);
+				if(newstate->numCri + 1 == numOfCri)newstate->h = 0;
 				// h fuction may need change
 				//if(newstate -> numCri < tmp.numCri)delete newstate;
 				//else 
@@ -750,10 +758,18 @@ void Map::criPath(int start, int end, Map & reEdge, YenPath & edgepath, double t
 					for(int j = 0; j < newstate -> node.size(); j++)
 						if(v[newstate -> node[j]].isCritical)
 							newstate -> numCri++;
+							
+					int numOfIn = 0;
+					for(int j = 0; j < newstate -> node.size(); j++)
+						numOfIn += reEdge[newstate->node[j]].e.size();
+					
 					newstate -> h =  (double)newstate -> totalLen/newstate -> numCri;
 							+ (double)(numOfCri - newstate -> numCri) * 
 							v.size() * 5 / 
-							(v.size() - newstate -> node.size());
+							(v.size() - newstate -> node.size())
+							+ numOfIn;
+							
+					if(newstate->numCri + 1 == numOfCri)newstate->h = 0;
 					
 					q.push(newstate);
 					k++;
