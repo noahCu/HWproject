@@ -163,6 +163,28 @@ struct Yenanscmp{
 	}
 };
 
+bool realcheck(int start, int end, Map & omap, YenPath & path){
+	if(path.node[0] != start || path.node[path.node.size() - 1] != end)return false;
+	int last = path.node[0];
+	bool vis[omap.v.size() + 5];
+	for(int i = 0; i < omap.v.size(); i++)vis[i] = 0;
+	vis[path.node[0]] = 1;
+	for(int i = 1; i < path.node.size(); i++){
+		bool flag = 0;
+		for(int j = 0; j < omap[last].e.size(); j++)
+			if(omap[last][j].edgeID == path.edge[i] && omap[last][j].to == path.node[i]){
+				flag = 1;	break;
+			}
+		if(flag == 0)return 0;
+		last = path.node[i];
+		vis[last] = 1;
+	}
+	for(int i = 0; i < omap.v.size(); i++){
+		if(omap[i].isCritical && vis[i] == 0)return 0;
+	}
+	return 1;
+}
+
 void Map::criPathold(int start, int end, Map & reEdge, std::vector<YenPath> & edgepath){
 	std::vector<SPath> dis;
 	bool valid[v.size() + 5];
@@ -196,19 +218,24 @@ void Map::criPathold(int start, int end, Map & reEdge, std::vector<YenPath> & ed
 	bool flag = true; // whether is operating the shortest path
 	bool ansflag = false; // whether path is found
 	int numans = 0; // number of ans
+	/*int occ[v.size() + 5];
+	for(int i = 0; i < v.size(); i++)occ[i] = 0;
+	for(int i = 0; i < init.node.size(); i++)occ[init.node[i]]++;
+	int count = 0;*/
 	priority_queue<YenPath, deque<YenPath>, Yenanscmp> ansq;
 
 	while(!q.empty()){
 		YenPath & tmp = *q.top(); 
 		q.pop();
-		if(checkValid(start, end, tmp.node)){
+		if(realcheck(start, end, *this, tmp)){
 			ansflag = true;
 			numans++;	ansq.push(tmp);
-			if(numans >= 100000)break;
+			if(numans >= 10000)break;
 		}
 		
 		clock_t ed = clock();
-		if((ed - be) / CLOCKS_PER_SEC >= 3.5)break;
+		if((ansflag == 0 && (ed - be) / CLOCKS_PER_SEC >= 3.5) || 
+		(ansflag == 1 && (ed - be) / CLOCKS_PER_SEC >= 5))break;
 		
 		for(int i = 0; i < v.size(); i++)valid[i] = true;
 		for(int i = 0; i < tmp.node.size(); i++)
@@ -216,6 +243,27 @@ void Map::criPathold(int start, int end, Map & reEdge, std::vector<YenPath> & ed
 		// delete invalid nodes
 		
 		reEdge.shortestPath(end, dis, valid); // get shortest path from end
+		
+		std::vector<SPath> constdis;
+		for(int i = 0; i < dis.size(); i++){
+			SPath tmpdis;
+			constdis.push_back(tmpdis);
+			constdis[i].pre = dis[i].pre;
+			constdis[i].val = dis[i].val;
+			constdis[i].x = dis[i].x;
+			constdis[i].preEdge = dis[i].preEdge;
+		}
+		/*
+		bool cutvalid[v.size() + 5], turnon = 0;
+		for(int i = 0; i < v.size(); i++)cutvalid[i] = valid[i];
+		
+		std::vector<SPath> cutdis;
+		if(count >= 10000){
+			for(int i = 0; i < v.size(); i++)
+				if(cutvalid[i] && occ[i] > 0.7 * count && i != start && i != end)
+					cutvalid[i] = 0, turnon = 1;
+			if(turnon == 1)reEdge.shortestPath(end, cutdis, cutvalid);
+		}*/
 
 		std::set<YenCri, YenCricmp> criq;
 		/*for(int i = 0; i < v.size(); i++)
@@ -273,18 +321,88 @@ void Map::criPathold(int start, int end, Map & reEdge, std::vector<YenPath> & ed
 				for(int j = 0; j < newstate -> node.size(); j++)
 					numOfIn += reEdge[newstate->node[j]].e.size();
 				
-				newstate -> h =  (double)newstate -> totalLen/newstate -> numCri
-						+ v.size() * 5 *
+				if(v.size() <= 50)newstate->h = newstate->totalLen;
+				else newstate -> h =  (double)newstate -> totalLen/newstate -> numCri
+						+ v.size() * 4.5 *
 						(double)(numOfCri - newstate -> numCri) / 
 						(v.size() - newstate -> node.size());
-						+ numOfIn;
+						//+ (double)numOfIn //* v.size() / 100.0
+						//+ newstate -> totalLen;
 						//+ v.size() * 0.5 * 
 						//(1.0 - (double)newstate -> numCri / numOfCri);
 				if(newstate->numCri + 1 == numOfCri)newstate->h = 0;
-				// h fuction may need change
-				//if(newstate -> numCri < tmp.numCri)delete newstate;
-				//else 
-					q.push(newstate);
+				
+				q.push(newstate);
+				/*
+				for(int j = 0; j < newstate -> node.size(); j++)
+					occ[newstate->node[i]]++;
+				count++;
+				*/	
+				//---------------------------------------------
+				if(v.size() >= 100){
+				if(constdis[v[pre].e[i].to].val == INF)continue;
+				newstate = new YenPath();
+				makeNewstate(end, newstate, &v[pre].e[i], tmp, constdis, criq);
+				newstate -> numCri = -1;
+				for(int j = 0; j < newstate -> node.size(); j++)
+					if(v[newstate -> node[j]].isCritical)newstate -> numCri++;
+					
+				numOfIn = 0;
+				for(int j = 0; j < newstate -> node.size(); j++)
+					numOfIn += reEdge[newstate->node[j]].e.size();
+				
+				if(v.size() <= 50)newstate->h = newstate->totalLen;
+				else newstate -> h =  (double)newstate -> totalLen/newstate -> numCri
+						+ v.size() * 4.5 *
+						(double)(numOfCri - newstate -> numCri) / 
+						(v.size() - newstate -> node.size());
+						//+ (double)numOfIn //* v.size() / 100.0
+						//+ 0 * newstate -> totalLen;
+						//+ v.size() * 0.5 * 
+						//(1.0 - (double)newstate -> numCri / numOfCri);
+				if(newstate->numCri + 1 == numOfCri)newstate->h = 0;
+				//printf("%d\n", numOfIn);
+				
+				q.push(newstate);
+				/*
+				for(int j = 0; j < newstate -> node.size(); j++)
+					occ[newstate->node[i]]++;
+				count++;
+				*/	
+				}
+				/*//----------------------------------------------------
+				if(v.size() >= 100 && turnon == 1){
+				if(cutvalid[v[pre].e[i].to] == false)continue;
+				if(v[pre].e[i].edgeID == tmp.edge[tmp.x])continue;
+				if(cutdis[v[pre].e[i].to].val == INF)continue;
+				newstate = new YenPath();
+				makeNewstate(end, newstate, &v[pre].e[i], tmp, cutdis, criq);
+				newstate -> numCri = -1;
+				for(int j = 0; j < newstate -> node.size(); j++)
+					if(v[newstate -> node[j]].isCritical)newstate -> numCri++;
+					
+				int numOfIn = 0;
+				for(int j = 0; j < newstate -> node.size(); j++)
+					numOfIn += reEdge[newstate->node[j]].e.size();
+				
+				if(v.size() <= 50)newstate->h = newstate->totalLen;
+				else newstate -> h =  (double)newstate -> totalLen/newstate -> numCri
+						+ v.size() * 4.5 *
+						(double)(numOfCri - newstate -> numCri) / 
+						(v.size() - newstate -> node.size());
+						//+ (double)numOfIn //* v.size() / 100.0
+						//+ newstate -> totalLen;
+						//+ v.size() * 0.5 * 
+						//(1.0 - (double)newstate -> numCri / numOfCri);
+				if(newstate->numCri + 1 == numOfCri)newstate->h = 0;
+				
+				q.push(newstate);
+				
+				for(int j = 0; j < newstate -> node.size(); j++)
+					occ[newstate->node[i]]++;
+				count++;
+				}*/
+				
 			}// find all the deviation states
 /*
 			while(!newq.empty() && ((flag == true && newq.top() -> h < tmp.h) || 
@@ -328,8 +446,8 @@ void Map::criPathold(int start, int end, Map & reEdge, std::vector<YenPath> & ed
 		edgepath.clear();
 		edgepath.clear();
 	}else{
-		int l = 2000;
-		if(l > ansq.size())l = ansq.size();
+		int l = 0;
+		l = ansq.size();
 		for(int i = 0; i < l; i++){
 			edgepath.push_back(ansq.top());
 			ansq.pop();
@@ -455,6 +573,11 @@ void betterPath(int start, int end, Map & omap, Map & reEdge, std::vector<YenPat
 					goto jump;
 				}
 				q.push(newstate);
+				if(newstate->totalLen < edgepath.totalLen){
+					edgepath = *newstate;
+				}
+				ed = clock();
+				if((ed - be) / CLOCKS_PER_SEC > time)return;
 			}else{
 				for(int i = last1Cri; i <= next1Cri; i++)valid[tmp.node[i]] = 1;
 				for(int i = last2Cri; i <= next2Cri; i++)valid[tmp.node[i]] = 1;
@@ -526,6 +649,11 @@ void betterPath(int start, int end, Map & omap, Map & reEdge, std::vector<YenPat
 					goto jump;
 				}
 				q.push(newstate);
+				if(newstate->totalLen < edgepath.totalLen){
+					edgepath = *newstate;
+				}
+				ed = clock();
+				if((ed - be) / CLOCKS_PER_SEC > time)return;
 			}
 			// newstate
 			
@@ -633,7 +761,7 @@ void Map::criPath(int start, int end, Map & reEdge, YenPath & edgepath, double t
 	while(!q.empty()){
 		YenPath & tmp = *q.top(); 
 		q.pop();
-		if(checkValid(start, end, tmp.node)){
+		if(realcheck(start, end, *this, tmp)){
 			ansflag = true;
 			numans++;	ansq.push(tmp);
 			if(numans >= 10000)break;
@@ -763,11 +891,12 @@ void Map::criPath(int start, int end, Map & reEdge, YenPath & edgepath, double t
 					for(int j = 0; j < newstate -> node.size(); j++)
 						numOfIn += reEdge[newstate->node[j]].e.size();
 					
-					newstate -> h =  (double)newstate -> totalLen/newstate -> numCri;
+					if(v.size() <= 50)newstate->h = newstate->totalLen;
+					else newstate->h = (double)newstate ->totalLen/newstate -> numCri
 							+ (double)(numOfCri - newstate -> numCri) * 
-							v.size() * 5 / 
-							(v.size() - newstate -> node.size())
-							+ numOfIn;
+							v.size() * 4.5 / 
+							(v.size() - newstate -> node.size());
+							//+ newstate->totalLen;
 							
 					if(newstate->numCri + 1 == numOfCri)newstate->h = 0;
 					

@@ -25,15 +25,15 @@ int main(int argc, char* argv[]) {
 		clock_t ed = clock();
 		YenPath bpath;
 		res.push_back(bpath);
-		reEdge.criPath(omap.t[0], omap.s[0], omap, res[0], 8.5 - ((ed - be) / CLOCKS_PER_SEC));
+		reEdge.criPath(omap.t[0], omap.s[0], omap, res[0], 8 - ((ed - be) / CLOCKS_PER_SEC));
 		if(res[0].node.empty())betterres.edge.clear();
 		else{
 			ed = clock();
-			betterPath(omap.t[0], omap.s[0], reEdge, omap, res, betterres, 9 - ((ed - be) / CLOCKS_PER_SEC));
+			betterPath(omap.t[0], omap.s[0], reEdge, omap, res, betterres, 8.5 - ((ed - be) / CLOCKS_PER_SEC));
 		}
 	}else{
 		clock_t ed = clock();
-		betterPath(omap.t[0], omap.s[0], reEdge, omap, res, betterres, 8.5 - ((ed - be) / CLOCKS_PER_SEC));
+		betterPath(omap.t[0], omap.s[0], reEdge, omap, res, betterres, 7 - ((ed - be) / CLOCKS_PER_SEC));
 	}
 	
 	std::vector<int> path;

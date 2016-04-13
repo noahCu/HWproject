@@ -11,6 +11,7 @@ int inputMap( string mapfile, string cfile, Map & omap, std::map<int, bool> & is
 	char comma;
 	while (!mapRead.eof()) {
 		mapRead >> edgeID >> comma >> from >> comma >> to >> comma >> val;
+		if(mapRead.eof())break;
 		if (idRef.find(from) == idRef.end()) {
 			idRef[from] = omap.push_back( from );
 		}
@@ -34,10 +35,12 @@ int inputMap( string mapfile, string cfile, Map & omap, std::map<int, bool> & is
 	int crinum = 0;
 	while (!cRead.eof()) {
 		cRead >> cri;
-		if(!cRead.eof())cRead >> ch;
+		if(cRead.eof())break;
 		isCritical[ idRef[cri] ] = 1;
 		omap[ idRef[cri] ].isCritical = 1;
 		crinum++;
+		cRead >> ch;
+		if(cRead.eof())break;
 	}
 
 
@@ -57,5 +60,7 @@ void outputRes( const vector<int> & path, const string & outputfile) {
 			resWrite << *itr;
 		}
 	}
+	resWrite << '\n';
+	resWrite.close();
 }
 
